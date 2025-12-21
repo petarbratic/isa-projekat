@@ -1,0 +1,14 @@
+# IntelliJ
+.idea/
+*.iml
+
+# Maven
+isa-backend/target/
+
+# Node / Angular
+isa-frontend/node_modules/
+isa-frontend/dist/
+
+# OS
+.DS_Store
+Thumbs.db
