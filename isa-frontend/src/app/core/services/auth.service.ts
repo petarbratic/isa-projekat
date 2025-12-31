@@ -8,7 +8,9 @@ import { Router } from '@angular/router';
 import { of } from 'rxjs/internal/observable/of';
 import { Observable } from 'rxjs';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
 
   constructor(
