@@ -32,6 +32,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
+    @Override
+    public User findByEmail(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email);
+    }
+
     public User findById(Long id) throws AccessDeniedException {
         return userRepository.findById(id).orElseGet(null);
     }
