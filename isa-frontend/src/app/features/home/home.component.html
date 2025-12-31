@@ -1,2 +1,25 @@
 <h1>Youtubic</h1>
-<p>Home feed</p>
+
+<!-- Nije ulogovan -->
+<div *ngIf="!isLoggedIn">
+  <p>Home feed (guest)</p>
+
+  <button routerLink="/login">
+    Login
+  </button>
+
+  <button routerLink="/signup">
+    Sign up
+  </button>
+</div>
+
+<!-- Ulogovan -->
+<div *ngIf="authService.tokenIsPresent()">
+  <p>Dobrodošao, {{ userService.currentUser?.firstName }} {{ userService.currentUser?.lastName }}</p>
+
+  <button (click)="logout()">
+    Logout
+  </button>
+
+  <p>Home feed (authenticated)</p>
+</div>

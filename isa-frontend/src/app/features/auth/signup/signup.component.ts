@@ -69,25 +69,32 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit() {
-    /**
-     * Innocent until proven guilty
-     */
-    this.notification;
     this.submitted = true;
 
-    this.authService.signup(this.form.value)
-      .subscribe(data => {
-        console.log(data);
-        this.authService.login(this.form.value).subscribe(() => {
-          this.userService.getMyInfo().subscribe();
-        });
-        this.router.navigate([this.returnUrl]);
-      },
-        error => {
-          this.submitted = false;
-          console.log('Sign up error');
-          this.notification = { msgType: 'error', msgBody: error['error'].message };
-        });
+    this.authService.signup(this.form.value).subscribe({
+      next: () => {
+        const creds = {
+          username: this.form.value.username,
+          password: this.form.value.password
+        };
 
+        this.authService.login(creds).subscribe({
+          next: () => {
+            this.userService.getMyInfo().subscribe({
+              next: () => this.router.navigate([this.returnUrl]),
+              error: () => this.router.navigate([this.returnUrl]) 
+            });
+          },
+          error: () => {
+            this.submitted = false;
+            this.notification = { msgType: 'error', msgBody: 'Auto-login nakon registracije nije uspeo.' };
+          }
+        });
+      },
+      error: (error) => {
+        this.submitted = false;
+        this.notification = { msgType: 'error', msgBody: error?.error?.message ?? 'Sign up error.' };
+      }
+    });
   }
 }

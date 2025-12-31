@@ -37,7 +37,8 @@ export class AuthService {
       .pipe(map((res) => {
         console.log('Login success');
         this.access_token = res.body.accessToken;
-        localStorage.setItem("jwt", res.body.accessToken)
+        localStorage.setItem("jwt", res.body.accessToken);
+        return res.body;
       }));
   }
 
@@ -59,12 +60,26 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  tokenIsPresent() {
-    return this.access_token != undefined && this.access_token != null;
+  tokenIsPresent(): boolean {
+    return !!this.getToken();
   }
 
-  getToken() {
-    return this.access_token;
-  }
+  getToken(): string | null {
+    if (this.access_token) return this.access_token;
+
+    const stored = localStorage.getItem('jwt');
+    this.access_token = stored as any; // ili: this.access_token = stored;
+    return stored;
+}
+    getUsername(): string | null {
+        // ako je userService.currentUser popunjen (posle /whoami), uzmi odatle
+        const u: any = this.userService.currentUser;
+        if (u?.firstName && u?.lastName) return `${u.firstName} ${u.lastName}`;
+        if (u?.username) return u.username;
+
+        // fallback: možeš kasnije čuvati displayName u localStorage,
+        // ali sada vraćamo null ako nemamo info
+        return null;
+    }
 
 }
