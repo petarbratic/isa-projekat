@@ -17,7 +17,12 @@ import { SignupComponent } from './features/auth/signup/signup.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from '../app/core/interceptors/TokenInterceptor';
+import { AuthService } from './core/services/auth.service';
+import { ApiService } from './core/services/api.service';
+import { UserService } from './core/services/user.service';
+import { ConfigService } from './core/services/config.service';
 
 @NgModule({
   declarations: [
@@ -38,7 +43,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatProgressSpinnerModule,
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    },
+    AuthService,
+    ApiService,
+    UserService,
+    ConfigService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
