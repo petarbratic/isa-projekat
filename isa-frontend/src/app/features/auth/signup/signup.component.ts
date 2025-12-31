@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserService } from '../../../core/services/user.service';
@@ -11,11 +11,26 @@ interface DisplayMessage {
   msgBody: string;
 }
 
+export function passwordMatchValidator(): ValidatorFn {
+  return (group: AbstractControl): ValidationErrors | null => {
+    const password = group.get('password')?.value;
+    const confirm = group.get('confirmPassword')?.value;
+
+    if (!password || !confirm) {
+      return null;
+    }
+
+    return password === confirm ? null : { passwordsDontMatch: true };
+  };
+}
+
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss']
 })
+
+
 export class SignupComponent implements OnInit {
   title = 'Sign up';
   form!: FormGroup;
@@ -57,10 +72,13 @@ export class SignupComponent implements OnInit {
     this.form = this.formBuilder.group({
       username: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(64)])],
       password: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(32)])],
+      confirmPassword: ['', Validators.required],
       firstname: [''],
       lastname: [''],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(128)]]
-    });
+    },
+    { validators: passwordMatchValidator() }
+  );
   }
 
   ngOnDestroy() {
@@ -69,13 +87,22 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.form.invalid) return;
+
     this.submitted = true;
 
-    this.authService.signup(this.form.value).subscribe({
+    const payload = {
+      username: this.form.value.username,
+      password: this.form.value.password,
+      firstname: this.form.value.firstname,
+      lastname: this.form.value.lastname,
+      email: this.form.value.email
+    };
+
+    this.authService.signup(payload).subscribe({
       next: () => {
         this.submitted = false;
 
-        // poruka (opciono)
         this.router.navigate(['/login', {
           msgType: 'success',
           msgBody: 'Registracija uspešna. Uloguj se.'
@@ -87,4 +114,5 @@ export class SignupComponent implements OnInit {
       }
     });
   }
+  
 }

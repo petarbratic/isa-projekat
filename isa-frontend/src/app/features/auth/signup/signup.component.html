@@ -16,6 +16,14 @@
                 <input formControlName="password" matInput required type="password">
             </mat-form-field>
             <mat-form-field>
+                <label>Confirm password: </label>
+                <input formControlName="confirmPassword" matInput required type="password">
+            </mat-form-field>
+            <p class="error"
+                    *ngIf="form.errors?.['passwordsDontMatch'] && (form.touched || form.dirty)">
+                Lozinke se ne poklapaju.
+            </p>
+            <mat-form-field>
                 <label>First Name: </label>
                 <input formControlName="firstname" matInput>
             </mat-form-field>
@@ -23,9 +31,9 @@
                 <label>Last Name: </label>
                 <input formControlName="lastname" matInput>
             </mat-form-field>
-            <mat-form-field>
-                <label>Email: </label>
-                <input formControlName="email" matInput>
+            <mat-form-field appearance="fill">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email">
             </mat-form-field>
             <button [disabled]="!form.valid" color="primary" mat-raised-button type="submit">Sign up</button>
             <br>
