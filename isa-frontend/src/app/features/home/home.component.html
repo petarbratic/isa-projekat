@@ -1,25 +1,37 @@
-<h1>Youtubic</h1>
+<header class="app-header">
+  <!-- Levo -->
+  <div class="header-left">
+    <h1 class="logo">Youtubic</h1>
+  </div>
 
-<!-- Nije ulogovan -->
-<div *ngIf="!isLoggedIn">
-  <p>Home feed (guest)</p>
+  <!-- Sredina (rezervisano za search bar) -->
+  <div class="header-center">
+    <!-- ovde kasnije ide search bar -->
+  </div>
 
-  <button routerLink="/login">
-    Login
-  </button>
+  <!-- Desno (guest) -->
+  <div class="header-right" *ngIf="!authService.tokenIsPresent()">
+    <button routerLink="/login">Login</button>
+    <button routerLink="/signup">Sign up</button>
+  </div>
 
-  <button routerLink="/signup">
-    Sign up
-  </button>
-</div>
+  <!-- Desno (ulogovan) -->
+  <div class="header-right" *ngIf="authService.tokenIsPresent()">
+    <span>
+      {{ userService.currentUser?.firstName }} {{ userService.currentUser?.lastName }}
+    </span>
+    <button (click)="logout()">Logout</button>
+  </div>
+</header>
 
-<!-- Ulogovan -->
-<div *ngIf="authService.tokenIsPresent()">
-  <p>Dobrodošao, {{ userService.currentUser?.firstName }} {{ userService.currentUser?.lastName }}</p>
+<main class="content">
+  <!-- Nije ulogovan -->
+  <div *ngIf="!authService.tokenIsPresent()">
+    <p>Home feed (guest)</p>
+  </div>
 
-  <button (click)="logout()">
-    Logout
-  </button>
-
-  <p>Home feed (authenticated)</p>
-</div>
+  <!-- Ulogovan -->
+  <div *ngIf="authService.tokenIsPresent()">
+    <p>Home feed (authenticated)</p>
+  </div>
+</main>

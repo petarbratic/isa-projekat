@@ -73,23 +73,13 @@ export class SignupComponent implements OnInit {
 
     this.authService.signup(this.form.value).subscribe({
       next: () => {
-        const creds = {
-          username: this.form.value.username,
-          password: this.form.value.password
-        };
+        this.submitted = false;
 
-        this.authService.login(creds).subscribe({
-          next: () => {
-            this.userService.getMyInfo().subscribe({
-              next: () => this.router.navigate([this.returnUrl]),
-              error: () => this.router.navigate([this.returnUrl]) 
-            });
-          },
-          error: () => {
-            this.submitted = false;
-            this.notification = { msgType: 'error', msgBody: 'Auto-login nakon registracije nije uspeo.' };
-          }
-        });
+        // poruka (opciono)
+        this.router.navigate(['/login', {
+          msgType: 'success',
+          msgBody: 'Registracija uspešna. Uloguj se.'
+        }], { queryParams: { returnUrl: this.returnUrl } });
       },
       error: (error) => {
         this.submitted = false;

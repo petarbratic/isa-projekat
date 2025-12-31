@@ -10,7 +10,6 @@ import { UserService } from '../../core/services/user.service';
 })
 export class HomeComponent implements OnInit {
 
-  isLoggedIn = false;
   username: string | null = null;
 
   constructor(
@@ -20,12 +19,12 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.tokenIsPresent();
     this.username = this.authService.getUsername();
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.username = null;
+    this.router.navigateByUrl('');
   }
 }
