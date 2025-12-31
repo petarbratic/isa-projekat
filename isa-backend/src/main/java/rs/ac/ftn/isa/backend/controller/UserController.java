@@ -1,45 +1,62 @@
-// preuzeto iz vezbi 2
-
 package rs.ac.ftn.isa.backend.controller;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rs.ac.ftn.isa.backend.model.User;
-import rs.ac.ftn.isa.backend.service.EmailService;
 
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import rs.ac.ftn.isa.backend.model.User;
+import rs.ac.ftn.isa.backend.service.UserService;
+
+
+// Primer kontrolera cijim metodama mogu pristupiti samo autorizovani korisnici
 @RestController
-@CrossOrigin(origins="*")
-@RequestMapping("/users")
+@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
+@CrossOrigin
 public class UserController {
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
 
     @Autowired
-    private EmailService emailService;
+    private AuthenticationManager authenticationManager;
 
-    @PostMapping("/signup/async")
-    public ResponseEntity<String> signUpAsync(@RequestBody User user){
-        System.out.println("Thread id: " + Thread.currentThread().getId());
-        try {
-            emailService.sendNotificationAsync(user);
-        }catch( Exception e ){
-            logger.info("Greska prilikom slanja emaila: " + e.getMessage());
-        }
+    @Autowired
+    private UserService userService;
 
-        return new ResponseEntity<>("success", HttpStatus.OK);
+    // Za pristup ovoj metodi neophodno je da ulogovani korisnik ima ADMIN ulogu
+    // Ukoliko nema, server ce vratiti gresku 403 Forbidden
+    // Korisnik jeste autentifikovan, ali nije autorizovan da pristupi resursu
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
+
+    public User loadById(@PathVariable Long userId) {
+        return this.userService.findById(userId);
     }
 
-    @PostMapping("/signup/sync")
-    public ResponseEntity<String> signUpSync(@RequestBody User user){
-        System.out.println("Thread id: " + Thread.currentThread().getId());
-        try {
-            emailService.sendNotificationSync(user);
-        }catch( Exception e ){
-            logger.info("Greska prilikom slanja emaila: " + e.getMessage());
-        }
+    @GetMapping("/user/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<User> loadAll() {
+        return this.userService.findAll();
+    }
 
-        return new ResponseEntity<>("success", HttpStatus.OK);
+    @GetMapping("/whoami")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public User user(Principal user) {
+        return this.userService.findByUsername(user.getName());
+    }
+
+    @GetMapping("/foo")
+    public Map<String, String> getFoo() {
+        Map<String, String> fooObj = new HashMap<>();
+        fooObj.put("foo", "bar");
+        return fooObj;
     }
 }
