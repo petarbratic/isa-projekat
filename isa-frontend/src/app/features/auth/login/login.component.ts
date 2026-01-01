@@ -66,24 +66,30 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    /**
-     * Innocent until proven guilty
-     */
-    
-    this.notification;
+    if (this.form.invalid) return;
+
+    this.notification = undefined as any;
     this.submitted = true;
 
-    this.authService.login(this.form.value)
-      .subscribe(data => {
+    this.authService.login(this.form.value).subscribe({
+      next: (data) => {
         console.log(data);
-          this.userService.getMyInfo().subscribe();
-          this.router.navigate([this.returnUrl]);
-        },
-        error => {
-          console.log(error);
-          this.submitted = false;
-          this.notification = {msgType: 'error', msgBody: 'Incorrect username or password.'};
-        });
+        this.userService.getMyInfo().subscribe();
+        this.submitted = false;
+        this.router.navigate([this.returnUrl]);
+      },
+      error: (error) => {
+        console.log(error);
+        this.submitted = false;
+
+        const msg =
+          typeof error?.error === 'string'
+            ? error.error
+            : (error?.error?.message ?? 'Login error.');
+
+        this.notification = { msgType: 'error', msgBody: msg };
+      }
+    });
   }
 
 }

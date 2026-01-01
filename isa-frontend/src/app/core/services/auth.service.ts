@@ -86,7 +86,7 @@ export class AuthService {
         const u = this.userService.currentUser as User | null;
         if (!u) return null;
 
-        if (u.firstname && u.lastname) return `${u.firstname} ${u.lastname}`;
+        if (u.firstName && u.lastName) return `${u.firstName} ${u.lastName}`;
         return u.username ?? null;
     }
 
