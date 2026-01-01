@@ -107,7 +107,7 @@ export class SignupComponent implements OnInit {
 
         this.router.navigate(['/login', {
           msgType: 'success',
-          msgBody: 'Registracija uspešna. Uloguj se.'
+          msgBody: 'Registracija uspešna. Proverite email da biste aktivirali nalog.'
         }], { queryParams: { returnUrl: this.returnUrl } });
       },
       error: (error) => {

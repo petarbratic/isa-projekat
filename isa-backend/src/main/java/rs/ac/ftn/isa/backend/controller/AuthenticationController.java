@@ -11,10 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import rs.ac.ftn.isa.backend.dto.JwtAuthenticationRequest;
 import rs.ac.ftn.isa.backend.dto.UserRequest;
@@ -79,7 +76,7 @@ public class AuthenticationController {
     // Endpoint za registraciju novog korisnika
     @PostMapping("/signup")
     public ResponseEntity<User> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
-        User existUser = this.userService.findByUsername(userRequest.getEmail());
+        User existUser = this.userService.findByEmail(userRequest.getEmail());
 
         if (existUser != null) {
             throw new ResourceConflictException(userRequest.getId(), "Email already exists");
@@ -87,6 +84,23 @@ public class AuthenticationController {
 
         User user = this.userService.save(userRequest);
 
+        System.out.println(
+                "ACTIVATION LINK: http://localhost:4200/activate?token=" + user.getActivationToken()
+        );
+
         return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/activate")
+    public ResponseEntity<?> activate(@RequestParam("token") String token) {
+        User activated = userService.activateAccount(token);
+
+        if (activated == null) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Invalid activation token.");
+        }
+
+        return ResponseEntity.ok("Account activated.");
     }
 }

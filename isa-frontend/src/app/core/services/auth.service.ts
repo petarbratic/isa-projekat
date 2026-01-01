@@ -90,4 +90,9 @@ export class AuthService {
         return u.username ?? null;
     }
 
+    activateAccount(token: string): Observable<string> {
+        const url = `${this.config.activate_url}?token=${encodeURIComponent(token)}`;
+        return this.apiService.getText(url);
+    }
+
 }

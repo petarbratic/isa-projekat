@@ -23,13 +23,15 @@ import { AuthService } from './core/services/auth.service';
 import { ApiService } from './core/services/api.service';
 import { UserService } from './core/services/user.service';
 import { ConfigService } from './core/services/config.service';
+import { ActivateComponent } from './features/auth/activate/activate.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     SignupComponent,
-    LoginComponent
+    LoginComponent,
+    ActivateComponent
   ],
   imports: [
     BrowserModule,
