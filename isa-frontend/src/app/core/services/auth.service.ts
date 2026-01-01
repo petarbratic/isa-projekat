@@ -7,6 +7,18 @@ import { catchError, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { of } from 'rxjs/internal/observable/of';
 import { Observable } from 'rxjs';
+import { User } from '../../models/user.model';
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export type SignupRequest = User & { password: string };
+
+export interface AuthResponse {
+  accessToken: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -23,34 +35,34 @@ export class AuthService {
 
   private access_token = null;
 
-  login(user:any) {
+  login(req: LoginRequest): Observable<AuthResponse> {
     const loginHeaders = new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     });
     // const body = `username=${user.username}&password=${user.password}`;
     const body = {
-      'email': user.email,
-      'password': user.password
+      'email': req.email,
+      'password': req.password
     };
     return this.apiService.post(this.config.login_url, JSON.stringify(body), loginHeaders)
-      .pipe(map((res) => {
+    .pipe(map((res) => {
         console.log('Login success');
         this.access_token = res.body.accessToken;
         localStorage.setItem("jwt", res.body.accessToken);
-        return res.body;
-      }));
+        return res.body as AuthResponse;
+    }));
   }
 
-  signup(user:any) {
+  signup(req: SignupRequest): Observable<void> {
     const signupHeaders = new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     });
-    return this.apiService.post(this.config.signup_url, JSON.stringify(user), signupHeaders)
-      .pipe(map(() => {
+    return this.apiService.post(this.config.signup_url, JSON.stringify(req), signupHeaders)
+    .pipe(map(() => {
         console.log('Sign up success');
-      }));
+    }));
   }
 
   logout() {
@@ -71,14 +83,11 @@ export class AuthService {
     return stored;
 }
     getUsername(): string | null {
-        // ako je userService.currentUser popunjen (posle /whoami), uzmi odatle
-        const u: any = this.userService.currentUser;
-        if (u?.firstName && u?.lastName) return `${u.firstName} ${u.lastName}`;
-        if (u?.username) return u.username;
+        const u = this.userService.currentUser as User | null;
+        if (!u) return null;
 
-        // fallback: možeš kasnije čuvati displayName u localStorage,
-        // ali sada vraćamo null ako nemamo info
-        return null;
+        if (u.firstname && u.lastname) return `${u.firstname} ${u.lastname}`;
+        return u.username ?? null;
     }
 
 }
