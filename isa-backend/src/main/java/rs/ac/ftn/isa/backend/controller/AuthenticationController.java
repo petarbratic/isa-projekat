@@ -2,6 +2,7 @@ package rs.ac.ftn.isa.backend.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +19,21 @@ import rs.ac.ftn.isa.backend.dto.UserRequest;
 import rs.ac.ftn.isa.backend.dto.UserTokenState;
 import rs.ac.ftn.isa.backend.exception.ResourceConflictException;
 import rs.ac.ftn.isa.backend.model.User;
+import rs.ac.ftn.isa.backend.service.EmailService;
 import rs.ac.ftn.isa.backend.service.UserService;
 import rs.ac.ftn.isa.backend.util.TokenUtils;
-
-
 
 
 //Kontroler zaduzen za autentifikaciju korisnika
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationController {
+
+    @Value("${app.frontend.base-url}")
+    private String frontendBaseUrl;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private TokenUtils tokenUtils;
@@ -77,16 +83,21 @@ public class AuthenticationController {
     @PostMapping("/signup")
     public ResponseEntity<User> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
         User existUser = this.userService.findByEmail(userRequest.getEmail());
-
         if (existUser != null) {
             throw new ResourceConflictException(userRequest.getId(), "Email already exists");
         }
 
         User user = this.userService.save(userRequest);
 
-        System.out.println(
-                "ACTIVATION LINK: http://localhost:4200/activate?token=" + user.getActivationToken()
-        );
+        String token = user.getActivationToken();
+        if (token == null || token.isBlank()) {
+            throw new IllegalStateException("Activation token is null/blank after save(). Proveri userService.save.");
+        }
+
+        String link = frontendBaseUrl + "/activate?token=" + token;
+
+        // asinhrono slanje (ti već imaš @Async)
+        emailService.sendActivationEmailAsync(user.getEmail(), link);
 
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
