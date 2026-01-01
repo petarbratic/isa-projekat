@@ -75,6 +75,7 @@ export class SignupComponent implements OnInit {
       confirmPassword: ['', Validators.required],
       firstname: [''],
       lastname: [''],
+      address: ['', [Validators.required, Validators.maxLength(256)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(128)]]
     },
     { validators: passwordMatchValidator() }
@@ -96,6 +97,7 @@ export class SignupComponent implements OnInit {
       password: this.form.value.password,
       firstname: this.form.value.firstname,
       lastname: this.form.value.lastname,
+      address: this.form.value.address,
       email: this.form.value.email
     };
 
