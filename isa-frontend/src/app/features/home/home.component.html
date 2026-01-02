@@ -35,3 +35,8 @@
     <p>Home feed (authenticated)</p>
   </div>
 </main>
+<button routerLink="/upload" *ngIf="authService.tokenIsPresent()">
+  Upload video
+</button>
+
+<app-video-list></app-video-list>

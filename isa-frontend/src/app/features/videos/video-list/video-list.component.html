@@ -1,0 +1,9 @@
+<div *ngFor="let video of videos">
+  <h3>{{ video.title }}</h3>
+
+  <img [src]="videoService.getThumbnail(video.id)" width="200">
+
+  <p>{{ video.description }}</p>
+
+  <small>Tags: {{ video.tags.join(', ') }}</small>
+</div>

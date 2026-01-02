@@ -23,13 +23,18 @@ import { AuthService } from './core/services/auth.service';
 import { ApiService } from './core/services/api.service';
 import { UserService } from './core/services/user.service';
 import { ConfigService } from './core/services/config.service';
+import { VideoListComponent } from './features/videos/video-list/video-list.component';
+import { CreateVideoComponent } from './features/videos/create-video/create-video.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     SignupComponent,
-    LoginComponent
+    LoginComponent,
+    CreateVideoComponent,
+    VideoListComponent
   ],
   imports: [
     BrowserModule,

@@ -38,6 +38,7 @@ export class AuthService {
         console.log('Login success');
         this.access_token = res.body.accessToken;
         localStorage.setItem("jwt", res.body.accessToken);
+        console.log('Token in localStorage:', localStorage.getItem('jwt'));
         return res.body;
       }));
   }

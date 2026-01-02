@@ -1,0 +1,78 @@
+<h2>Upload video</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+
+  <label>
+    Naslov videa
+    <input type="text" formControlName="title">
+  </label>
+
+  <label>
+    Opis videa
+    <textarea formControlName="description"></textarea>
+  </label>
+
+  <label>
+    Tagovi (razdvojeni zarezima)
+    <input type="text" formControlName="tags" placeholder="npr: java, ft n, isa">
+  </label>
+
+  <label>
+    Lokacija (opciono)
+    <input type="text" formControlName="location" placeholder="Novi Sad">
+  </label>
+
+  <hr>
+
+  <label>
+    🎬 Video fajl (MP4, max 200MB)
+  </label>
+  <input
+    type="file"
+    accept="video/mp4"
+    (change)="onVideoSelected($event)"
+  >
+  <small *ngIf="videoFile">
+    Izabran video: {{ videoFile.name }}
+  </small>
+
+  <br><br>
+
+  <label>
+    🖼️ Thumbnail slika (PNG/JPG)
+  </label>
+  <input
+    type="file"
+    accept="image/png,image/jpeg"
+    (change)="onThumbnailSelected($event)"
+  >
+  <small *ngIf="thumbnailFile">
+    Izabrana slika: {{ thumbnailFile.name }}
+  </small>
+
+  <br><br>
+
+  <button type="submit" [disabled]="form.invalid || !videoFile || !thumbnailFile">
+    Upload
+  </button>
+
+</form>
+
+<hr>
+
+<h2>Lista videa</h2>
+
+<div *ngFor="let video of videos">
+  <h3>{{ video.title }}</h3>
+
+  <!-- Prikaz thumbnail-a -->
+  <img [src]="videoService.getThumbnail(video.id)" width="200" *ngIf="videoService.getThumbnail(video.id)">
+
+  <!-- Prikaz video fajla -->
+  <video *ngIf="video.videoUrl" width="400" controls>
+    <source [src]="video.videoUrl" type="video/mp4">
+  </video>
+
+  <p>{{ video.description }}</p>
+  <small>Tags: {{ video.tags.join(', ') }}</small>
+</div>
