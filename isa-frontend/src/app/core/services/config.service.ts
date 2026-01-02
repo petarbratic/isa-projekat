@@ -39,4 +39,12 @@ export class ConfigService {
     return this._signup_url;
   }
 
+  private _activate_url = this._auth_url + '/activate';
+
+  get activate_url(): string {
+    return this._activate_url;
+  }
+
+  
+
 }

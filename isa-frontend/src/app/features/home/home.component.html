@@ -17,9 +17,10 @@
 
   <!-- Desno (ulogovan) -->
   <div class="header-right" *ngIf="authService.tokenIsPresent()">
-    <span>
-      {{ userService.currentUser?.firstName }} {{ userService.currentUser?.lastName }}
+    <span *ngIf="userService.currentUser; else loadingUser">
+        {{ userService.currentUser.firstName }} {{ userService.currentUser.lastName }}
     </span>
+    <ng-template #loadingUser>Loading...</ng-template>
     <button (click)="logout()">Logout</button>
   </div>
 </header>
