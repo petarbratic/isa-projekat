@@ -19,6 +19,7 @@ import rs.ac.ftn.isa.backend.dto.UserRequest;
 import rs.ac.ftn.isa.backend.dto.UserTokenState;
 import rs.ac.ftn.isa.backend.exception.ResourceConflictException;
 import rs.ac.ftn.isa.backend.model.User;
+import rs.ac.ftn.isa.backend.security.LoginRateLimiter;
 import rs.ac.ftn.isa.backend.service.EmailService;
 import rs.ac.ftn.isa.backend.service.UserService;
 import rs.ac.ftn.isa.backend.util.TokenUtils;
@@ -28,6 +29,12 @@ import rs.ac.ftn.isa.backend.util.TokenUtils;
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationController {
+
+    @Autowired
+    private LoginRateLimiter loginRateLimiter;
+
+    @Autowired
+    private jakarta.servlet.http.HttpServletRequest request;
 
     @Value("${app.frontend.base-url}")
     private String frontendBaseUrl;
@@ -50,6 +57,13 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletResponse response) {
+
+        String ip = getClientIp(request);
+        if (!loginRateLimiter.allow(ip)) {
+            return ResponseEntity
+                    .status(429)
+                    .body("Previše pokušaja prijave. Pokušajte ponovo za minut.");
+        }
 
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -114,4 +128,13 @@ public class AuthenticationController {
 
         return ResponseEntity.ok("Account activated.");
     }
+
+    private String getClientIp(jakarta.servlet.http.HttpServletRequest request) {
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
+    }
+
 }
