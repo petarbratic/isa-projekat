@@ -28,7 +28,7 @@ export class AuthService {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     });
-    // const body = `username=${user.username}&password=${user.password}`;
+    
     const body = {
       'email': user.email,
       'password': user.password
@@ -58,6 +58,7 @@ export class AuthService {
     this.userService.currentUser = null;
     localStorage.removeItem("jwt");
     this.access_token = null;
+    window.location.reload();
   }
 
   tokenIsPresent(): boolean {
@@ -68,17 +69,14 @@ export class AuthService {
     if (this.access_token) return this.access_token;
 
     const stored = localStorage.getItem('jwt');
-    this.access_token = stored as any; // ili: this.access_token = stored;
+    this.access_token = stored as any; 
     return stored;
 }
     getUsername(): string | null {
-        // ako je userService.currentUser popunjen (posle /whoami), uzmi odatle
         const u: any = this.userService.currentUser;
         if (u?.firstName && u?.lastName) return `${u.firstName} ${u.lastName}`;
         if (u?.username) return u.username;
 
-        // fallback: možeš kasnije čuvati displayName u localStorage,
-        // ali sada vraćamo null ako nemamo info
         return null;
     }
 

@@ -14,6 +14,8 @@ export class CreateVideoComponent {
   thumbnailFile!: File;
   submitting = false;
   videos: any[] = [];
+  locations = ['Novi Sad', 'Beograd', 'Niš', 'Kragujevac'];
+  errorMessage: string = '';
   constructor(
     private fb: FormBuilder,
     public videoService: VideoService,
@@ -23,7 +25,7 @@ export class CreateVideoComponent {
       title: ['', Validators.required],
       description: ['', Validators.required],
       tags: [''],
-      location: ['']
+      location: ['Novi Sad', Validators.required]
     });
   }
 
@@ -56,10 +58,19 @@ export class CreateVideoComponent {
     formData.append('thumbnail', this.thumbnailFile);
 
     this.submitting = true;
-
+    this.errorMessage = '';
+    
     this.videoService.create(formData).subscribe({
       next: () => this.router.navigate(['/']),
-      error: () => this.submitting = false
+      error: (err) => {
+        this.submitting = false;
+
+        if (err?.error?.message) {
+          this.errorMessage = err.error.message;
+        } else {
+          this.errorMessage = 'Neuspešan upload videa. Pokušajte ponovo.';
+        }
+      }
     });
   }
 }

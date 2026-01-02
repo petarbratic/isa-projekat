@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { VideoPost } from '../../features/videos/video.model';
+import { catchError, timeout } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +18,19 @@ export class VideoService {
   }
 
   create(formData: FormData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/videos`, formData);
+    return this.http.post(`${this.apiUrl}/videos`, formData).pipe(
+      timeout(30000), 
+      catchError(err => {
+        if (err.name === 'TimeoutError') {
+          return throwError(() => new Error('Upload je istekao nakon 30 sekundi.'));
+        }
+        return throwError(() => err);
+      })
+    );
   }
-
+getVideoUrl(videoId: number): string {
+  return `${this.apiUrl}/videos/${videoId}/stream`;
+}
   getThumbnail(videoId: number): string {
     return `${this.apiUrl}/videos/${videoId}/thumbnail`;
   }

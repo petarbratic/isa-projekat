@@ -1,9 +1,44 @@
-<div *ngFor="let video of videos">
-  <h3>{{ video.title }}</h3>
+<div class="video-list">
+  <div class="video-card" *ngFor="let video of videos">
 
-  <img [src]="videoService.getThumbnail(video.id)" width="200">
+    <h3>{{ video.title }}</h3>
 
+    <img
+      *ngIf="playingVideoId !== video.id"
+      width="50%"
+      class="thumbnail"
+      [src]="videoService.getThumbnail(video.id)"
+      (click)="playVideo(video.id)"
+    >
+<div style="height: 1rem;"></div>
+    <button
+      *ngIf="playingVideoId !== video.id"
+      (click)="playVideo(video.id)">
+      ▶ Play
+    </button>
+
+    <video
+      *ngIf="playingVideoId === video.id"
+      width="80%"
+      heigth="80%"
+      controls
+      autoplay>
+      <source
+        [src]="videoService.getVideoUrl(video.id)"
+        type="video/mp4">
+      Your browser does not support video.
+    </video>
+
+    <div class="video-info">
   <p>{{ video.description }}</p>
+  <small class="tags">Tags: {{ video.tags.join(', ') }}</small>
+  <div class="created-at">
+    Created: {{ video.createdAt | date:'short' }}
+  </div>
+  <div class="location" *ngIf="video.location">
+    Location: {{ video.location }}
+  </div>
+</div>
 
-  <small>Tags: {{ video.tags.join(', ') }}</small>
+  </div>
 </div>

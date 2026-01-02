@@ -18,9 +18,11 @@
   </label>
 
   <label>
-    Lokacija (opciono)
-    <input type="text" formControlName="location" placeholder="Novi Sad">
-  </label>
+  Lokacija
+  <select formControlName="location">
+    <option *ngFor="let loc of locations" [value]="loc">{{ loc }}</option>
+  </select>
+</label>
 
   <hr>
 
@@ -59,20 +61,8 @@
 </form>
 
 <hr>
-
-<h2>Lista videa</h2>
-
-<div *ngFor="let video of videos">
-  <h3>{{ video.title }}</h3>
-
-  <!-- Prikaz thumbnail-a -->
-  <img [src]="videoService.getThumbnail(video.id)" width="200" *ngIf="videoService.getThumbnail(video.id)">
-
-  <!-- Prikaz video fajla -->
-  <video *ngIf="video.videoUrl" width="400" controls>
-    <source [src]="video.videoUrl" type="video/mp4">
-  </video>
-
-  <p>{{ video.description }}</p>
-  <small>Tags: {{ video.tags.join(', ') }}</small>
+<div *ngIf="errorMessage" style="color:red; font-weight:bold;">
+  {{ errorMessage }}
 </div>
+
+
