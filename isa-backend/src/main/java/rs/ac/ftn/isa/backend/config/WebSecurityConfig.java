@@ -103,7 +103,8 @@ public class WebSecurityConfig {
                         "/js/**",
                         "/images/**",
                         "/static/**",
-                        "/uploads/**"
+                        "/uploads/**",
+                        "/api/videos/**"
                 ).permitAll()
 
                 // za svaki drugi zahtev korisnik mora biti autentifikovan

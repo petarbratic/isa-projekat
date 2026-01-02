@@ -53,28 +53,25 @@ public class VideoPostController {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        String uploadDir = "C:/projekti/uploads/";
-
-        // kreiraj folder ako ne postoji
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+    @GetMapping(
+            value = "/videos/{id}/stream",
+            produces = "video/mp4"
+    )
+    public ResponseEntity<byte[]> streamVideo(@PathVariable Long id) {
+        try {
+            byte[] videoBytes = videoPostService.getVideo(id);
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.valueOf("video/mp4"))
+                    .body(videoBytes);
+        } catch (IOException e) {
+            return ResponseEntity.notFound().build();
         }
-
-        Path path = uploadPath.resolve(file.getOriginalFilename());
-        System.out.println("Čuvam fajl u: " + path.toAbsolutePath());
-
-        Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
-        String fileUrl = "http://localhost:8081/uploads/" + file.getOriginalFilename();
-        return ResponseEntity.ok(fileUrl);
     }
 
 
-
     @GetMapping("/videos")
+    @PreAuthorize("isAuthenticated()")
     public List<VideoPost> getAllVideos() {
         return videoPostService.findAll();
     }

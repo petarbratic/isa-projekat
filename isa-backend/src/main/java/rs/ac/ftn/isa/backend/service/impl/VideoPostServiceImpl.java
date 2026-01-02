@@ -63,12 +63,12 @@ public class VideoPostServiceImpl implements VideoPostService {
 
         videoPostRepository.save(post);
 
+        Path videoPath = Paths.get(VIDEO_DIR + post.getId() + ".mp4");
+        Path thumbPath = Paths.get(THUMB_DIR + post.getId() + ".png");
+
         try {
             Files.createDirectories(Paths.get(VIDEO_DIR));
             Files.createDirectories(Paths.get(THUMB_DIR));
-
-            Path videoPath = Paths.get(VIDEO_DIR + post.getId() + ".mp4");
-            Path thumbPath = Paths.get(THUMB_DIR + post.getId() + ".png");
 
             Files.copy(video.getInputStream(), videoPath, StandardCopyOption.REPLACE_EXISTING);
             Files.copy(thumbnail.getInputStream(), thumbPath, StandardCopyOption.REPLACE_EXISTING);
@@ -79,8 +79,23 @@ public class VideoPostServiceImpl implements VideoPostService {
             videoPostRepository.save(post);
 
         } catch (Exception e) {
+            try {
+                if (Files.exists(videoPath)) Files.delete(videoPath);
+                if (Files.exists(thumbPath)) Files.delete(thumbPath);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
             throw new IOException("Failed to save video or thumbnail", e);
         }
+    }
+
+    @Override
+    public byte[] getVideo(Long videoId) throws IOException {
+        VideoPost post = videoPostRepository.findById(videoId)
+                .orElseThrow(() -> new IllegalArgumentException("Video not found"));
+
+        return Files.readAllBytes(Path.of(post.getVideoPath()));
     }
 
     @Override

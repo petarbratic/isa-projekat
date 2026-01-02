@@ -15,6 +15,7 @@ public interface VideoPostService {
                 String userEmail) throws IOException;
 
     List<VideoPost> findAll();
+    byte[] getVideo(Long videoId) throws IOException;
 
     byte[] getThumbnail(Long videoId) throws IOException;
 }
