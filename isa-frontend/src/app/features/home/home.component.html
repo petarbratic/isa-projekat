@@ -1,34 +1,7 @@
-<header class="app-header">
-  <div class="header-left">
-    <h1 class="logo" routerLink="/">Youtubic</h1>
-  </div>
+<div *ngIf="!authService.tokenIsPresent()">
+  <p>Uloguj se da vidiš video snimke.</p>
+</div>
 
-  <div class="header-center">
-    <!-- kasnije search -->
-  </div>
-
-  <div class="header-right" *ngIf="!authService.tokenIsPresent()">
-    <button class="btn" routerLink="/login">Login</button>
-    <button class="btn btn-primary" routerLink="/signup">Sign up</button>
-  </div>
-
-  <div class="header-right" *ngIf="authService.tokenIsPresent()">
-    <span class="user-name" *ngIf="userService.currentUser; else loadingUser">
-      {{ userService.currentUser.firstName }} {{ userService.currentUser.lastName }}
-    </span>
-    <ng-template #loadingUser>Loading...</ng-template>
-
-    <button class="icon-btn" routerLink="/upload" title="Upload video">+</button>
-    <button class="btn" (click)="logout()">Logout</button>
-  </div>
-</header>
-
-<main class="content">
-  <div *ngIf="!authService.tokenIsPresent()">
-    <p>Uloguj se da vidiš video snimke.</p>
-  </div>
-
-  <div *ngIf="authService.tokenIsPresent()">
-    <app-video-list></app-video-list>
-  </div>
-</main>
+<div *ngIf="authService.tokenIsPresent()">
+  <app-video-list></app-video-list>
+</div>

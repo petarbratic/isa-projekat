@@ -1,54 +1,70 @@
-<div *ngIf="video">
+<div class="video-page" *ngIf="video">
 
-  <h2>{{ video.title }}</h2>
+  <h2 class="video-title-main">{{ video.title }}</h2>
 
-  <video controls autoplay>
-    <source [src]="videoService.getVideoUrl(video.id)" type="video/mp4">
-    Your browser does not support video.
-  </video>
+  <div class="video-wrapper">
+    <video controls autoplay>
+      <source [src]="videoService.getVideoUrl(video.id)" type="video/mp4">
+      Your browser does not support video.
+    </video>
+  </div>
 
-  <div *ngIf="video.description">Description: {{ video.description }}</div>
-  <div *ngIf="video.tags?.length">Tags: {{ video.tags.join(', ') }}</div>
-  <div *ngIf="video.createdAt">Created: {{ video.createdAt | date:'medium' }}</div>
-  <div *ngIf="video.location">Location: {{ video.location }}</div>
+  <div class="video-meta">
+    <div *ngIf="video.description" class="meta-row">
+      <strong>Description:</strong> {{ video.description }}
+    </div>
 
-  <div class="actions">
-  <button (click)="like()" [class.active]="myReaction === 'like'">
-    Like ({{ likes }})
-  </button>
+    <div *ngIf="video.tags?.length" class="meta-row">
+      <strong>Tags:</strong> {{ video.tags.join(', ') }}
+    </div>
 
-  <button (click)="dislike()" [class.active]="myReaction === 'dislike'">
-    Dislike ({{ dislikes }})
-  </button>
-</div>
+    <div *ngIf="video.createdAt" class="meta-row">
+      <strong>Created:</strong> {{ video.createdAt | date:'medium' }}
+    </div>
 
-
-<hr>
-
-<h3>Comments</h3>
-
-<!-- Forma za unos komentara -->
-<div class="comment-form">
-  <textarea
-    [(ngModel)]="newComment"
-    placeholder="Write a comment..."
-    rows="3">
-  </textarea>
-
-  <button (click)="addCommentMock()">
-    Add comment
-  </button>
-</div>
-
-<!-- Lista komentara -->
-<div class="comments">
-  <div class="comment" *ngFor="let c of comments">
-    <div class="comment-author">{{ c.author }}</div>
-    <div class="comment-text">{{ c.text }}</div>
-    <div class="comment-date">
-      {{ c.createdAt | date:'short' }}
+    <div *ngIf="video.location" class="meta-row">
+      <strong>Location:</strong> {{ video.location }}
     </div>
   </div>
-</div>
+
+  <div class="actions">
+    <button
+      (click)="like()"
+      [class.active]="myReaction === 'like'">
+      Like {{ likes }}
+    </button>
+
+    <button
+      (click)="dislike()"
+      [class.active]="myReaction === 'dislike'">
+      Dislike {{ dislikes }}
+    </button>
+  </div>
+
+  <hr>
+
+  <h3 class="comments-title">Comments</h3>
+
+  <div class="comment-form">
+    <textarea
+      [(ngModel)]="newComment"
+      placeholder="Write a comment..."
+      rows="3">
+    </textarea>
+
+    <button (click)="addCommentMock()">
+      Add comment
+    </button>
+  </div>
+
+  <div class="comments">
+    <div class="comment" *ngFor="let c of comments">
+      <div class="comment-author">{{ c.author }}</div>
+      <div class="comment-text">{{ c.text }}</div>
+      <div class="comment-date">
+        {{ c.createdAt | date:'short' }}
+      </div>
+    </div>
+  </div>
 
 </div>

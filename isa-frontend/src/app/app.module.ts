@@ -32,6 +32,7 @@ import { ActivateComponent } from './features/auth/activate/activate.component';
 import { VideoComponent } from './features/video/video.component';
 
 import { FormsModule } from '@angular/forms';
+import { ShellComponent } from './layout/shell/shell.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { FormsModule } from '@angular/forms';
     VideoListComponent,
 
     ActivateComponent,
-    VideoComponent
+    VideoComponent,
+    ShellComponent
   ],
   imports: [
     BrowserModule,
