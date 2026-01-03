@@ -66,6 +66,29 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
+
+  this.submitted = true;
+  this.notification ;
+  this.authService.login(this.form.value).subscribe({
+    next: (res) => {
+      console.log('Logged in, token:', this.authService.getToken());
+      
+      // odmah dobijemo info o korisniku
+      this.userService.getMyInfo().subscribe({
+        next: (user) => console.log('User info:', user),
+        error: (err) => console.error('Failed to fetch user info:', err)
+      });
+
+      this.router.navigate([this.returnUrl]);
+    },
+    error: (err) => {
+      console.error('Login failed:', err);
+      this.submitted = false;
+      this.notification = { msgType: 'error', msgBody: 'Incorrect email or password.' };
+    }
+  });
+}
+
     if (this.form.invalid) return;
 
     this.notification = undefined as any;
@@ -91,5 +114,6 @@ export class LoginComponent implements OnInit {
       }
     });
   }
+
 
 }
