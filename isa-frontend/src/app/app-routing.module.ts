@@ -8,6 +8,7 @@ import { CreateVideoComponent } from './features/videos/create-video/create-vide
 import { VideoListComponent } from './features/videos/video-list/video-list.component';
 
 import { ActivateComponent } from './features/auth/activate/activate.component';
+import { VideoComponent } from './features/video/video.component';
 
 
 const routes: Routes = [
@@ -19,8 +20,8 @@ const routes: Routes = [
 { path: '', component: VideoListComponent },
 
   { path: 'login', component: LoginComponent },
-  { path: 'activate', component: ActivateComponent }
-
+  { path: 'activate', component: ActivateComponent },
+  { path: 'video/:id', component: VideoComponent }
 ];
 
 @NgModule({

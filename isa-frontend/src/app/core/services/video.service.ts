@@ -34,4 +34,7 @@ getVideoUrl(videoId: number): string {
   getThumbnail(videoId: number): string {
     return `${this.apiUrl}/videos/${videoId}/thumbnail`;
   }
+  getById(videoId: number): Observable<VideoPost> {
+  return this.http.get<VideoPost>(`${this.apiUrl}/videos/${videoId}`);
+}
 }
