@@ -1,68 +1,60 @@
-<h2>Upload video</h2>
+<div class="create-video-container">
+  <h2>Upload video</h2>
+  <p class="subtitle">Popuni podatke i dodaj fajlove.</p>
 
-<form [formGroup]="form" (ngSubmit)="submit()">
+  <form [formGroup]="form" (ngSubmit)="submit()">
 
-  <label>
-    Naslov videa
-    <input type="text" formControlName="title">
-  </label>
+    <div class="section">
+      <div class="grid">
+        <div class="field">
+          <label>Naslov videa</label>
+          <input type="text" formControlName="title" placeholder="Npr. Hemija 1 - kolokvijum">
+        </div>
 
-  <label>
-    Opis videa
-    <textarea formControlName="description"></textarea>
-  </label>
+        <div class="field">
+          <label>Lokacija</label>
+          <select formControlName="location">
+            <option *ngFor="let loc of locations" [value]="loc">{{ loc }}</option>
+          </select>
+        </div>
+      </div>
 
-  <label>
-    Tagovi (razdvojeni zarezima)
-    <input type="text" formControlName="tags" placeholder="npr: java, ft n, isa">
-  </label>
+      <div class="field">
+        <label>Opis videa</label>
+        <textarea rows="4" formControlName="description" placeholder="Kratak opis..."></textarea>
+      </div>
 
-  <label>
-  Lokacija
-  <select formControlName="location">
-    <option *ngFor="let loc of locations" [value]="loc">{{ loc }}</option>
-  </select>
-</label>
+      <div class="field">
+        <label>Tagovi (razdvojeni zarezima)</label>
+        <input type="text" formControlName="tags" placeholder="npr: java, ftn, isa">
+      </div>
+    </div>
 
-  <hr>
+    <div class="section">
+      <div class="file-grid">
+        <div class="file-box">
+          <div class="file-title">Video fajl</div>
+          <div class="file-sub">MP4, max 200MB</div>
+          <input type="file" accept="video/mp4" (change)="onVideoSelected($event)">
+          <div class="file-name" *ngIf="videoFile">{{ videoFile.name }}</div>
+        </div>
 
-  <label>
-    🎬 Video fajl (MP4, max 200MB)
-  </label>
-  <input
-    type="file"
-    accept="video/mp4"
-    (change)="onVideoSelected($event)"
-  >
-  <small *ngIf="videoFile">
-    Izabran video: {{ videoFile.name }}
-  </small>
+        <div class="file-box">
+          <div class="file-title">Thumbnail</div>
+          <div class="file-sub">PNG/JPG</div>
+          <input type="file" accept="image/png,image/jpeg" (change)="onThumbnailSelected($event)">
+          <div class="file-name" *ngIf="thumbnailFile">{{ thumbnailFile.name }}</div>
+        </div>
+      </div>
+    </div>
 
-  <br><br>
+    <button class="submit-btn" type="submit" [disabled]="form.invalid || !videoFile || !thumbnailFile">
+      Upload
+    </button>
 
-  <label>
-    🖼️ Thumbnail slika (PNG/JPG)
-  </label>
-  <input
-    type="file"
-    accept="image/png,image/jpeg"
-    (change)="onThumbnailSelected($event)"
-  >
-  <small *ngIf="thumbnailFile">
-    Izabrana slika: {{ thumbnailFile.name }}
-  </small>
+    <div class="error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
 
-  <br><br>
-
-  <button type="submit" [disabled]="form.invalid || !videoFile || !thumbnailFile">
-    Upload
-  </button>
-
-</form>
-
-<hr>
-<div *ngIf="errorMessage" style="color:red; font-weight:bold;">
-  {{ errorMessage }}
+  </form>
 </div>
-
-

@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-video',
-  templateUrl: './create-video.component.html'
+  templateUrl: './create-video.component.html',
+  styleUrls: ['./create-video.component.scss']
 })
 export class CreateVideoComponent {
 
