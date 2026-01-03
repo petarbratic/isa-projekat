@@ -13,15 +13,16 @@ import { ShellComponent } from './layout/shell/shell.component';
 
 const routes: Routes = [
   // STRANICE BEZ HEADERA
-  { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
-  { path: 'activate', component: ActivateComponent },
+  // (trenutno nema nijedne)
 
   // STRANICE SA HEADEROM
   {
     path: '',
     component: ShellComponent,
     children: [
+      { path: 'login', component: LoginComponent },
+      { path: 'signup', component: SignupComponent },
+      { path: 'activate', component: ActivateComponent },
       { path: '', component: HomeComponent },          // HOME
       { path: 'upload', component: CreateVideoComponent },
       { path: 'video/:id', component: VideoComponent }
