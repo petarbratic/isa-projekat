@@ -2,6 +2,7 @@ package rs.ac.ftn.isa.backend.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.web.multipart.MultipartFile;
 import rs.ac.ftn.isa.backend.dto.VideoPostRequest;
@@ -18,4 +19,6 @@ public interface VideoPostService {
     byte[] getVideo(Long videoId) throws IOException;
 
     byte[] getThumbnail(Long videoId) throws IOException;
+
+    public Optional<VideoPost> findById(Long id);
 }

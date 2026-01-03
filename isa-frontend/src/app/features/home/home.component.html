@@ -24,12 +24,10 @@
 </header>
 
 <main class="content">
-  <!-- Nije ulogovan -->
   <div *ngIf="!authService.tokenIsPresent()">
     <p>Uloguj se da vidiš video snimke.</p>
   </div>
 
-  <!-- Ulogovan -->
   <div *ngIf="authService.tokenIsPresent()">
     <app-video-list></app-video-list>
   </div>

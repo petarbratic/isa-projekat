@@ -29,7 +29,9 @@ import { CreateVideoComponent } from './features/videos/create-video/create-vide
 
 
 import { ActivateComponent } from './features/auth/activate/activate.component';
+import { VideoComponent } from './features/video/video.component';
 
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -41,8 +43,8 @@ import { ActivateComponent } from './features/auth/activate/activate.component';
     CreateVideoComponent,
     VideoListComponent,
 
-    ActivateComponent
-
+    ActivateComponent,
+    VideoComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +56,8 @@ import { ActivateComponent } from './features/auth/activate/activate.component';
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    FormsModule
   ],
   providers: [
     {
