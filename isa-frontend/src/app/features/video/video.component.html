@@ -1,6 +1,6 @@
 <div class="video-page" *ngIf="video">
 
-  <h2 class="video-title-main">{{ video.title }}</h2>
+  
 
   <div class="video-wrapper">
     <video controls autoplay>
@@ -8,6 +8,8 @@
       Your browser does not support video.
     </video>
   </div>
+
+  <h2 class="video-title-main">{{ video.title }}</h2>
 
   <div class="video-meta">
     <div *ngIf="video.description" class="meta-row">
