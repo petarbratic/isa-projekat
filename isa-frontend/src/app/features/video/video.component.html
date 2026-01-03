@@ -1,0 +1,15 @@
+<div *ngIf="video">
+
+  <h2>{{ video.title }}</h2>
+
+  <video controls autoplay>
+    <source [src]="videoService.getVideoUrl(video.id)" type="video/mp4">
+    Your browser does not support video.
+  </video>
+
+  <div *ngIf="video.description">Description: {{ video.description }}</div>
+  <div *ngIf="video.tags?.length">Tags: {{ video.tags.join(', ') }}</div>
+  <div *ngIf="video.createdAt">Created: {{ video.createdAt | date:'medium' }}</div>
+  <div *ngIf="video.location">Location: {{ video.location }}</div>
+
+</div>

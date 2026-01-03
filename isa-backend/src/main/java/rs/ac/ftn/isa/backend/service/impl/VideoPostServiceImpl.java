@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -109,5 +110,9 @@ public class VideoPostServiceImpl implements VideoPostService {
         VideoPost post = videoPostRepository.findById(videoId)
                 .orElseThrow(() -> new IllegalArgumentException("Video not found"));
         return Files.readAllBytes(Path.of(post.getThumbnailPath()));
+    }
+
+    public Optional<VideoPost> findById(Long id) {
+        return videoPostRepository.findById(id);
     }
 }

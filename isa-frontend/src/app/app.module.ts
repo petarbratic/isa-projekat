@@ -29,6 +29,7 @@ import { CreateVideoComponent } from './features/videos/create-video/create-vide
 
 
 import { ActivateComponent } from './features/auth/activate/activate.component';
+import { VideoComponent } from './features/video/video.component';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { ActivateComponent } from './features/auth/activate/activate.component';
     CreateVideoComponent,
     VideoListComponent,
 
-    ActivateComponent
+    ActivateComponent,
+      VideoComponent
 
   ],
   imports: [

@@ -1,44 +1,11 @@
 <div class="video-list">
-  <div class="video-card" *ngFor="let video of videos">
-
-    <h3>{{ video.title }}</h3>
-
-    <img
-      *ngIf="playingVideoId !== video.id"
-      width="50%"
+  <div class="video-card" *ngFor="let video of videos"  [routerLink]="['/video', video.id]"
+  style="border: 1px solid black; max-width: 60px; align-items: center; margin: 10px;">
+    <img style="max-width: 40px; align-self: center; margin: 5px;"
       class="thumbnail"
       [src]="videoService.getThumbnail(video.id)"
-      (click)="playVideo(video.id)"
+      alt="Video thumbnail"
     >
-<div style="height: 1rem;"></div>
-    <button
-      *ngIf="playingVideoId !== video.id"
-      (click)="playVideo(video.id)">
-      ▶ Play
-    </button>
-
-    <video
-      *ngIf="playingVideoId === video.id"
-      width="80%"
-      heigth="80%"
-      controls
-      autoplay>
-      <source
-        [src]="videoService.getVideoUrl(video.id)"
-        type="video/mp4">
-      Your browser does not support video.
-    </video>
-
-    <div class="video-info">
-  <p>{{ video.description }}</p>
-  <small class="tags">Tags: {{ video.tags.join(', ') }}</small>
-  <div class="created-at">
-    Created: {{ video.createdAt | date:'short' }}
-  </div>
-  <div class="location" *ngIf="video.location">
-    Location: {{ video.location }}
-  </div>
-</div>
-
+    <div class="video-title" style="align-self: center;">{{ video.title }}</div>
   </div>
 </div>
