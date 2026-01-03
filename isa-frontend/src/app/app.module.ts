@@ -39,7 +39,7 @@ import { ActivateComponent } from './features/auth/activate/activate.component';
     LoginComponent,
 
     CreateVideoComponent,
-    VideoListComponent
+    VideoListComponent,
 
     ActivateComponent
 

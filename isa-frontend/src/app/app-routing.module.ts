@@ -16,7 +16,7 @@ const routes: Routes = [
 
   { path: 'login', component: LoginComponent},
   { path: 'upload', component: CreateVideoComponent },
-{ path: '', component: VideoListComponent }
+{ path: '', component: VideoListComponent },
 
   { path: 'login', component: LoginComponent },
   { path: 'activate', component: ActivateComponent }
