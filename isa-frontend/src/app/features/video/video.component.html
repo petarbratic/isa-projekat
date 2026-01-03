@@ -12,4 +12,43 @@
   <div *ngIf="video.createdAt">Created: {{ video.createdAt | date:'medium' }}</div>
   <div *ngIf="video.location">Location: {{ video.location }}</div>
 
+  <div class="actions">
+  <button (click)="like()" [class.active]="myReaction === 'like'">
+    Like ({{ likes }})
+  </button>
+
+  <button (click)="dislike()" [class.active]="myReaction === 'dislike'">
+    Dislike ({{ dislikes }})
+  </button>
+</div>
+
+
+<hr>
+
+<h3>Comments</h3>
+
+<!-- Forma za unos komentara -->
+<div class="comment-form">
+  <textarea
+    [(ngModel)]="newComment"
+    placeholder="Write a comment..."
+    rows="3">
+  </textarea>
+
+  <button (click)="addCommentMock()">
+    Add comment
+  </button>
+</div>
+
+<!-- Lista komentara -->
+<div class="comments">
+  <div class="comment" *ngFor="let c of comments">
+    <div class="comment-author">{{ c.author }}</div>
+    <div class="comment-text">{{ c.text }}</div>
+    <div class="comment-date">
+      {{ c.createdAt | date:'short' }}
+    </div>
+  </div>
+</div>
+
 </div>

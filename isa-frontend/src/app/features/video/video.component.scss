@@ -1,5 +1,55 @@
 video {
+  max-width: 400px;
+  max-height: 400px;
   width: 100%;
-  max-width: 900px;
+  height: auto;
   display: block;
+}
+
+.actions button {
+  padding: 6px 10px;
+  border: 1px solid #000;
+  background: #fff;
+  cursor: pointer;
+}
+
+.actions button.active {
+  background: #000;
+  color: #fff;
+}
+
+.comment-form {
+  margin-top: 10px;
+}
+
+.comment-form textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.comment-form button {
+  margin-top: 5px;
+}
+
+.comments {
+  margin-top: 15px;
+}
+
+.comment {
+  border-top: 1px solid #ddd;
+  padding: 8px 0;
+}
+
+.comment-author {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.comment-text {
+  margin: 4px 0;
+}
+
+.comment-date {
+  font-size: 11px;
+  color: #666;
 }
