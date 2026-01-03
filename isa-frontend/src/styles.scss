@@ -1,16 +1,13 @@
-html, body {
-  height: 100%;
-}
+@use '@angular/material' as mat;
 
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+@include mat.core();
 
-  background: #ffffff;
-  color: #000000;
-}
+$light-theme: mat.define-light-theme((
+  color: (
+    primary: mat.define-palette(mat.$blue-palette),
+    accent: mat.define-palette(mat.$indigo-palette),
+    warn: mat.define-palette(mat.$red-palette),
+  ),
+));
 
-.mat-app-background {
-  background: #ffffff;
-  color: #000000;
-}
+@include mat.all-component-themes($light-theme);

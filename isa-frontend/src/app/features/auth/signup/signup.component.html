@@ -7,42 +7,58 @@
     <mat-card-content>
         <p *ngIf="notification" [class]="notification.msgType">{{notification.msgBody}}</p>
         <form (ngSubmit)="onSubmit()" *ngIf="!submitted" [formGroup]="form">
-            <mat-form-field>
-                <label>Username: </label>
+
+            <div class="form-grid">
+                <mat-form-field appearance="outline">
+                <mat-label>Username</mat-label>
                 <input formControlName="username" matInput required>
-            </mat-form-field>
-            <mat-form-field>
-                <label>Password: </label>
-                <input formControlName="password" matInput required type="password">
-            </mat-form-field>
-            <mat-form-field>
-                <label>Confirm password: </label>
-                <input formControlName="confirmPassword" matInput required type="password">
-            </mat-form-field>
-            <p class="error"
-                    *ngIf="form.errors?.['passwordsDontMatch'] && (form.touched || form.dirty)">
-                Lozinke se ne poklapaju.
-            </p>
-            <mat-form-field>
-                <label>First Name: </label>
-                <input formControlName="firstname" matInput>
-            </mat-form-field>
-            <mat-form-field>
-                <label>Last Name: </label>
-                <input formControlName="lastname" matInput>
-            </mat-form-field>
-            <mat-form-field>
-                <label>Address: </label>
-                <input formControlName="address" matInput required>
-            </mat-form-field>
-            <mat-form-field appearance="fill">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
                 <mat-label>Email</mat-label>
                 <input matInput formControlName="email" type="email" required>
-            </mat-form-field>
-            <button [disabled]="form.invalid" color="primary" mat-raised-button type="submit">Sign up</button>
-            <br>
-            <button color="primary" mat-raised-button routerLink="/" >Go Back</button>
-        </form>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input formControlName="password" matInput required type="password">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                <mat-label>Confirm password</mat-label>
+                <input formControlName="confirmPassword" matInput required type="password">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                <mat-label>First name</mat-label>
+                <input formControlName="firstname" matInput>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                <mat-label>Last name</mat-label>
+                <input formControlName="lastname" matInput>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="span-2">
+                <mat-label>Address</mat-label>
+                <input formControlName="address" matInput required>
+                </mat-form-field>
+            </div>
+
+            <p class="error"
+                *ngIf="form.errors?.['passwordsDontMatch'] && (form.touched || form.dirty)">
+                Lozinke se ne poklapaju.
+            </p>
+
+            <button [disabled]="form.invalid" color="primary" mat-raised-button type="submit">
+                Sign up
+            </button>
+
+            <button mat-button routerLink="/">
+                Go Back
+            </button>
+
+            </form>
         <br>
         <mat-spinner *ngIf="submitted" mode="indeterminate"></mat-spinner>
         <br>

@@ -1,29 +1,69 @@
- <mat-card elevation="5" fxFlex class="content">
+<div class="login-page">
+  <mat-card class="login-card" elevation="6">
 
-        <mat-card-title>
-            <h2>{{title}}</h2>
-        </mat-card-title>
+    <mat-card-title>
+      <h2 class="login-title">{{ title }}</h2>
+      <p class="login-subtitle">Prijavite se na svoj nalog</p>
+    </mat-card-title>
 
-        <mat-card-content>
-            <p *ngIf="notification" [class]="notification.msgType">{{notification.msgBody}}</p>
+    <mat-card-content>
 
-            <form #loginForm="ngForm" (ngSubmit)="onSubmit()" *ngIf="!submitted" [formGroup]="form">
-                <mat-form-field>
-                    <input formControlName="email" matInput placeholder="Ovde unesite svoj email" required>
-                </mat-form-field>
-                <mat-form-field>
-                    <input formControlName="password" matInput placeholder="Ovde unesite sifru" required type="password">
-                </mat-form-field>
-                <button [disabled]="!loginForm.form.valid" color="primary" mat-raised-button
-                    type="submit">Login</button>
-                <br>
-                <button color="primary" mat-raised-button routerLink="/" >Go Back</button>
-            </form>
-            <br>
+      <p
+        *ngIf="notification"
+        class="notification"
+        [ngClass]="notification.msgType">
+        {{ notification.msgBody }}
+      </p>
 
-            <mat-spinner *ngIf="submitted" mode="indeterminate"></mat-spinner>
-            <br>
-            <hr>
-        </mat-card-content>
+      <form
+        #loginForm="ngForm"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        *ngIf="!submitted">
 
-    </mat-card>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            formControlName="email"
+            type="email"
+            placeholder="npr. korisnik@email.com"
+            required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Šifra</mat-label>
+          <input
+            matInput
+            formControlName="password"
+            type="password"
+            placeholder="Unesite šifru"
+            required>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="submit-btn"
+          type="submit"
+          [disabled]="!loginForm.form.valid">
+          Login
+        </button>
+
+        <button
+          mat-button
+          class="back-btn"
+          routerLink="/">
+          Nazad na početnu
+        </button>
+
+      </form>
+
+      <mat-spinner
+        *ngIf="submitted"
+        diameter="32">
+      </mat-spinner>
+
+    </mat-card-content>
+  </mat-card>
+</div>
