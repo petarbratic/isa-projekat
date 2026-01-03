@@ -1,0 +1,17 @@
+<mat-card elevation="5" class="content">
+  <mat-card-title>
+    <h2>Aktivacija naloga</h2>
+  </mat-card-title>
+
+  <mat-card-content>
+    <p [class]="msgType">{{ msgBody }}</p>
+
+    <mat-spinner *ngIf="loading" mode="indeterminate"></mat-spinner>
+
+    <div *ngIf="!loading" style="margin-top: 16px;">
+      <button color="primary" mat-raised-button (click)="goToLogin()">
+        Idi na Login
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

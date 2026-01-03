@@ -10,8 +10,6 @@ import { UserService } from '../../core/services/user.service';
 })
 export class HomeComponent implements OnInit {
 
-  username: string | null = null;
-
   constructor(
     public authService: AuthService,
     public userService: UserService,
@@ -19,12 +17,13 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.username = this.authService.getUsername();
+    if (this.authService.tokenIsPresent() && !this.userService.currentUser) {
+      this.userService.getMyInfo().subscribe();
+    }
   }
 
   logout(): void {
     this.authService.logout();
-    this.username = null;
     this.router.navigateByUrl('');
   }
 }

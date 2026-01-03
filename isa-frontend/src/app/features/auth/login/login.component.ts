@@ -66,6 +66,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
+
   this.submitted = true;
   this.notification ;
   this.authService.login(this.form.value).subscribe({
@@ -87,6 +88,32 @@ export class LoginComponent implements OnInit {
     }
   });
 }
+
+    if (this.form.invalid) return;
+
+    this.notification = undefined as any;
+    this.submitted = true;
+
+    this.authService.login(this.form.value).subscribe({
+      next: (data) => {
+        console.log(data);
+        this.userService.getMyInfo().subscribe();
+        this.submitted = false;
+        this.router.navigate([this.returnUrl]);
+      },
+      error: (error) => {
+        console.log(error);
+        this.submitted = false;
+
+        const msg =
+          typeof error?.error === 'string'
+            ? error.error
+            : (error?.error?.message ?? 'Login error.');
+
+        this.notification = { msgType: 'error', msgBody: msg };
+      }
+    });
+  }
 
 
 }

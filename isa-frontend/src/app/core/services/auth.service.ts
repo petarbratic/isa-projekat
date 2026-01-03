@@ -7,6 +7,18 @@ import { catchError, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { of } from 'rxjs/internal/observable/of';
 import { Observable } from 'rxjs';
+import { User } from '../../models/user.model';
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export type SignupRequest = User & { password: string };
+
+export interface AuthResponse {
+  accessToken: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -23,35 +35,40 @@ export class AuthService {
 
   private access_token = null;
 
-  login(user:any) {
+  login(req: LoginRequest): Observable<AuthResponse> {
     const loginHeaders = new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     });
     
     const body = {
-      'email': user.email,
-      'password': user.password
+      'email': req.email,
+      'password': req.password
     };
     return this.apiService.post(this.config.login_url, JSON.stringify(body), loginHeaders)
-      .pipe(map((res) => {
+    .pipe(map((res) => {
         console.log('Login success');
         this.access_token = res.body.accessToken;
         localStorage.setItem("jwt", res.body.accessToken);
+
         console.log('Token in localStorage:', localStorage.getItem('jwt'));
         return res.body;
       }));
+
+        return res.body as AuthResponse;
+    }));
+
   }
 
-  signup(user:any) {
+  signup(req: SignupRequest): Observable<void> {
     const signupHeaders = new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     });
-    return this.apiService.post(this.config.signup_url, JSON.stringify(user), signupHeaders)
-      .pipe(map(() => {
+    return this.apiService.post(this.config.signup_url, JSON.stringify(req), signupHeaders)
+    .pipe(map(() => {
         console.log('Sign up success');
-      }));
+    }));
   }
 
   logout() {
@@ -73,11 +90,24 @@ export class AuthService {
     return stored;
 }
     getUsername(): string | null {
+
         const u: any = this.userService.currentUser;
         if (u?.firstName && u?.lastName) return `${u.firstName} ${u.lastName}`;
         if (u?.username) return u.username;
 
         return null;
+
+        const u = this.userService.currentUser as User | null;
+        if (!u) return null;
+
+        if (u.firstName && u.lastName) return `${u.firstName} ${u.lastName}`;
+        return u.username ?? null;
+    }
+
+    activateAccount(token: string): Observable<string> {
+        const url = `${this.config.activate_url}?token=${encodeURIComponent(token)}`;
+        return this.apiService.getText(url);
+
     }
 
 }
