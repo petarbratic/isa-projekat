@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { VideoService } from 'src/app/core/services/video.service';
 import { VideoPost } from '../videos/video.model';
+import { PageResponse, CommentResponse } from 'src/app/models/comment.model';
 
 @Component({
   selector: 'app-video',
@@ -19,10 +20,13 @@ export class VideoComponent implements OnInit {
 
   newComment = '';
 
-  comments: { author: string; text: string; createdAt: Date }[] = [
-    { author: 'Marko', text: 'Odličan video!', createdAt: new Date('2026-01-01T12:00:00') },
-    { author: 'Ana', text: 'Može li nastavak?', createdAt: new Date('2026-01-02T09:30:00') }
-  ];
+  comments: CommentResponse[] = [];
+  page = 0;
+  size = 10;
+  totalPages = 0;
+
+  loadingComments = false;
+  commentError: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -38,6 +42,8 @@ export class VideoComponent implements OnInit {
       next: (v) => this.video = v,
       error: (err) => console.error('Failed to load video:', err)
     });
+
+    this.loadComments(0);
   }
 
   private loadReactionsMock(): void {
@@ -76,15 +82,55 @@ export class VideoComponent implements OnInit {
     this.dislikes++;
   }
 
-  addCommentMock(): void {
+  loadComments(page: number): void {
+    this.loadingComments = true;
+    this.commentError = null;
+
+    this.videoService.getComments(this.videoId, page, this.size).subscribe({
+      next: (res) => {
+        this.comments = res.content;
+        this.page = res.number;
+        this.totalPages = res.totalPages;
+        this.loadingComments = false;
+      },
+      error: (err) => {
+        this.commentError = 'Failed to load comments.';
+        this.loadingComments = false;
+        console.error(err);
+      }
+    });
+  }
+
+  addComment(): void {
     if (!this.newComment.trim()) return;
 
-    this.comments.unshift({
-      author: 'You',
-      text: this.newComment,
-      createdAt: new Date()
-    });
+    this.commentError = null;
 
-    this.newComment = '';
+    this.videoService.addComment(this.videoId, this.newComment.trim()).subscribe({
+      next: () => {
+        this.newComment = '';
+        this.loadComments(0); // najnoviji komentar je na vrhu
+      },
+      error: (err) => {
+        if (err?.status === 429) {
+          this.commentError = 'Too many comments! The limit is 60 comments per hour.';
+        } else if (err?.status === 401) {
+          this.commentError = 'You must be logged in to post a comment.';
+        } else {
+          this.commentError = 'Failed to add comment.';
+        }
+        console.error(err);
+      }
+    });
+  }
+
+  nextPage(): void {
+    if (this.page + 1 >= this.totalPages) return;
+    this.loadComments(this.page + 1);
+  }
+
+  prevPage(): void {
+    if (this.page === 0) return;
+    this.loadComments(this.page - 1);
   }
 }

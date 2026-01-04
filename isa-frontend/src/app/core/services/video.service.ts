@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { VideoPost } from '../../features/videos/video.model';
 import { catchError, timeout } from 'rxjs/operators';
+import { PageResponse, CommentResponse } from 'src/app/models/comment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -28,13 +29,30 @@ export class VideoService {
       })
     );
   }
-getVideoUrl(videoId: number): string {
-  return `${this.apiUrl}/videos/${videoId}/stream`;
-}
+  
+  getVideoUrl(videoId: number): string {
+    return `${this.apiUrl}/videos/${videoId}/stream`;
+  }
+
   getThumbnail(videoId: number): string {
     return `${this.apiUrl}/videos/${videoId}/thumbnail`;
   }
+
   getById(videoId: number): Observable<VideoPost> {
-  return this.http.get<VideoPost>(`${this.apiUrl}/videos/${videoId}`);
-}
+    return this.http.get<VideoPost>(`${this.apiUrl}/videos/${videoId}`);
+  }
+
+  getComments(videoId: number, page = 0, size = 10): Observable<PageResponse<CommentResponse>> {
+    return this.http.get<PageResponse<CommentResponse>>(
+      `${this.apiUrl}/videos/${videoId}/comments?page=${page}&size=${size}`
+    );
+  }
+
+  addComment(videoId: number, text: string): Observable<CommentResponse> {
+    return this.http.post<CommentResponse>(
+      `${this.apiUrl}/videos/${videoId}/comments`,
+      { text }
+    );
+  }
+
 }

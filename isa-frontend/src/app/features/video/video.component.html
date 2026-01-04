@@ -54,19 +54,28 @@
       rows="3">
     </textarea>
 
-    <button (click)="addCommentMock()">
+    <button (click)="addComment()">
       Add comment
     </button>
   </div>
 
+  <div class="comment-error" *ngIf="commentError">{{ commentError }}</div>
+  <div *ngIf="loadingComments">Loading comments...</div>
+
   <div class="comments">
     <div class="comment" *ngFor="let c of comments">
-      <div class="comment-author">{{ c.author }}</div>
+      <div class="comment-author">{{ c.authorName || c.authorEmail }}</div>
       <div class="comment-text">{{ c.text }}</div>
       <div class="comment-date">
         {{ c.createdAt | date:'short' }}
       </div>
     </div>
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button (click)="prevPage()" [disabled]="page === 0">Prev</button>
+    <span>Page {{ page + 1 }} / {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="page + 1 >= totalPages">Next</button>
   </div>
 
 </div>
