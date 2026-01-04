@@ -104,25 +104,85 @@ video {
 .comments {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .comment {
-  padding-top: 10px;
-  border-top: 1px solid #eee;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #e6e6e6;
 }
 
 .comment-author {
   font-weight: 700;
-  font-size: 13px;
+  font-size: 14px;
+  margin-bottom: 2px;
 }
 
 .comment-text {
-  margin: 4px 0;
+  margin: 6px 0;
   font-size: 14px;
+  line-height: 1.4;
 }
 
 .comment-date {
-  font-size: 11px;
+  font-size: 12px;
   color: #666;
+}
+
+.comment-error {
+  margin-top: 6px;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(220, 53, 69, 0.08);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  color: #b02a37;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.comment-form textarea:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 2px rgba(13,110,253,0.15);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.page-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #d0d7de;
+  background: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #f2f4f8;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 14px;
+  font-weight: 600;
 }
