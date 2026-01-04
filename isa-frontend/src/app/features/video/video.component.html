@@ -73,9 +73,17 @@
   </div>
 
   <div class="pagination" *ngIf="totalPages > 1">
-    <button (click)="prevPage()" [disabled]="page === 0">Prev</button>
-    <span>Page {{ page + 1 }} / {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="page + 1 >= totalPages">Next</button>
-  </div>
+    <button class="page-btn" (click)="prevPage()" [disabled]="page === 0">
+      ‹
+    </button>
 
+    <span class="page-info">
+      {{ page + 1 }} / {{ totalPages }}
+    </span>
+
+    <button class="page-btn" (click)="nextPage()" [disabled]="page + 1 >= totalPages">
+      ›
+    </button>
+  </div>
+  
 </div>

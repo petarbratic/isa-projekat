@@ -28,6 +28,9 @@ export class VideoComponent implements OnInit {
   loadingComments = false;
   commentError: string | null = null;
 
+  maxCommentLength = 500;
+  minCommentLength = 5;
+
   constructor(
     private route: ActivatedRoute,
     public videoService: VideoService
@@ -102,9 +105,25 @@ export class VideoComponent implements OnInit {
   }
 
   addComment(): void {
-    if (!this.newComment.trim()) return;
+    const text = this.newComment?.trim() ?? '';
+
+    if (!text) {
+      this.commentError = 'Comment text is required.';
+      return;
+    }
+
+    if (text.length < this.minCommentLength) {
+      this.commentError = `Comment must be at least ${this.minCommentLength} characters.`;
+      return;
+    }
+
+    if (text.length > this.maxCommentLength) {
+      this.commentError = `Comment must be at most ${this.maxCommentLength} characters.`;
+      return;
+    }
 
     this.commentError = null;
+
 
     this.videoService.addComment(this.videoId, this.newComment.trim()).subscribe({
       next: () => {
