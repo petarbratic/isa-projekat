@@ -33,7 +33,7 @@ public class VideoPostController {
             value = "/videos",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createVideo(
             @RequestPart("data") VideoPostRequest request,
             @RequestPart("video") MultipartFile video,
@@ -71,7 +71,7 @@ public class VideoPostController {
 
 
     @GetMapping("/videos")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public List<VideoPost> getAllVideos() {
         return videoPostService.findAll();
     }
@@ -87,7 +87,7 @@ public class VideoPostController {
     }
 
     @GetMapping("/videos/{id}")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public ResponseEntity<VideoPost> getVideoById(@PathVariable Long id) {
         return videoPostService.findById(id)
                 .map(ResponseEntity::ok)

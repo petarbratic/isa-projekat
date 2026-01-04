@@ -101,7 +101,7 @@ public class VideoPostServiceImpl implements VideoPostService {
 
     @Override
     public List<VideoPost> findAll() {
-        return videoPostRepository.findAll();
+        return videoPostRepository.findAllByOrderByCreatedAtDesc();
     }
 
 

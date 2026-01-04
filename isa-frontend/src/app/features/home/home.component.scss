@@ -1,0 +1,21 @@
+.guest-info {
+  background: #f4f7fb;                 
+  border: 1px solid #dbe3ef;
+  color: #111;                                   
+  padding: 18px 22px; 
+  border-radius: 12px;
+  margin: 20px auto 28px;
+  max-width: 920px;
+  display: flex;
+  align-items: center;
+  justify-content: center;             
+  text-align: center;                  
+  font-size: 14.5px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.guest-info p {
+  margin: 0;              
+  line-height: 1.4;      
+}
