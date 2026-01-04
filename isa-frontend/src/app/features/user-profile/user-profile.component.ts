@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UserService } from 'src/app/core/services/user.service';
 import { VideoService } from 'src/app/core/services/video.service';
 import { VideoPost } from '../videos/video.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-profile',
@@ -10,6 +11,8 @@ import { VideoPost } from '../videos/video.model';
   styleUrls: ['./user-profile.component.scss']
 })
 export class UserProfileComponent implements OnInit {
+  private sub?: Subscription;
+
   user: any = null;
   videos: VideoPost[] = [];
   loading = true;
@@ -22,8 +25,12 @@ export class UserProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadProfile(id);
+    this.sub = this.route.paramMap.subscribe(params => {
+      const id = Number(params.get('id'));
+      if (!id) return;
+
+      this.loadProfile(id);
+    });
   }
 
   private loadProfile(userId: number): void {

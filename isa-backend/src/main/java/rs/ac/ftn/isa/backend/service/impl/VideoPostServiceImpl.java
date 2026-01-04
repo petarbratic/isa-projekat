@@ -21,6 +21,7 @@ import rs.ac.ftn.isa.backend.model.VideoPost;
 import rs.ac.ftn.isa.backend.repository.UserRepository;
 import rs.ac.ftn.isa.backend.repository.VideoPostRepository;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
+import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
 
 @Service
 public class VideoPostServiceImpl implements VideoPostService {
@@ -118,5 +119,42 @@ public class VideoPostServiceImpl implements VideoPostService {
     @Override
     public List<VideoPost> findByOwnerId(Long ownerId) {
         return videoPostRepository.findByOwner_IdOrderByCreatedAtDesc(ownerId);
+    }
+
+    private VideoPostResponse toResponse(VideoPost post) {
+        VideoPostResponse dto = new VideoPostResponse();
+        dto.setId(post.getId());
+        dto.setTitle(post.getTitle());
+        dto.setDescription(post.getDescription());
+        dto.setTags(post.getTags());
+        dto.setLocation(post.getLocation());
+        dto.setCreatedAt(post.getCreatedAt());
+
+        if (post.getOwner() != null) {
+            dto.setOwnerId(post.getOwner().getId());
+
+            String first = post.getOwner().getFirstName() != null ? post.getOwner().getFirstName() : "";
+            String last = post.getOwner().getLastName() != null ? post.getOwner().getLastName() : "";
+            String fullName = (first + " " + last).trim();
+
+            if (fullName.isBlank()) {
+                fullName = post.getOwner().getEmail();
+            }
+
+            dto.setOwnerFullName(fullName);
+        }
+
+        return dto;
+    }
+
+    public List<VideoPostResponse> findAllResponses() {
+        return videoPostRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public Optional<VideoPostResponse> findResponseById(Long id) {
+        return videoPostRepository.findById(id).map(this::toResponse);
     }
 }

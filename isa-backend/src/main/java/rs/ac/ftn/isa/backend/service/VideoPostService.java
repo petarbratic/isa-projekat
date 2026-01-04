@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.web.multipart.MultipartFile;
 import rs.ac.ftn.isa.backend.dto.VideoPostRequest;
+import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
 import rs.ac.ftn.isa.backend.model.VideoPost;
 
 public interface VideoPostService {
@@ -23,4 +24,7 @@ public interface VideoPostService {
     public Optional<VideoPost> findById(Long id);
 
     List<VideoPost> findByOwnerId(Long ownerId);
+
+    List<VideoPostResponse> findAllResponses();
+    Optional<VideoPostResponse> findResponseById(Long id);
 }

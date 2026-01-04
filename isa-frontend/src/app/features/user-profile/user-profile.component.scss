@@ -34,16 +34,12 @@
   letter-spacing: 0.3px;
 }
 
-.error {
-  padding: 12px;
-  text-align: center;
-}
-
 .video-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.2rem;
-  margin: 1rem 0 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 260px));
+  gap: 16px;
+  justify-content: start;  
+  margin-top: 12px;
 }
 
 .video-card {
@@ -85,11 +81,13 @@
   overflow: hidden;
 }
 
-.empty {
+.empty, .error {
   background: #f7fbff;
   border: 1px solid #dbeafe;
   color: #111;
   padding: 12px 14px;
   border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
   text-align: center;
 }

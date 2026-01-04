@@ -12,6 +12,13 @@
   <h2 class="video-title-main">{{ video.title }}</h2>
 
   <div class="video-meta">
+    <div *ngIf="video.ownerId" class="meta-row">
+      <strong>Posted by:</strong>
+      <a class="meta-link" [routerLink]="['/profile', video.ownerId]">
+        {{ video.ownerFullName || ('User #' + video.ownerId) }}
+      </a>
+    </div>
+    
     <div *ngIf="video.description" class="meta-row">
       <strong>Description:</strong> {{ video.description }}
     </div>

@@ -18,7 +18,7 @@
   </div>
 
   <div class="header-right" *ngIf="authService.tokenIsPresent()">
-    <span class="user-name" *ngIf="userService.currentUser; else loadingUser">
+    <span class="user-name user-link" *ngIf="userService.currentUser as u; else loadingUser" [routerLink]="['/profile', u.id]">
       {{ userService.currentUser.firstName }} {{ userService.currentUser.lastName }}
     </span>
     <ng-template #loadingUser>Loading...</ng-template>
