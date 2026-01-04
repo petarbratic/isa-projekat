@@ -1,5 +1,6 @@
 export interface CommentResponse {
   id: number;
+  authorId: number;
   authorEmail: string;
   authorName: string;
   text: string;

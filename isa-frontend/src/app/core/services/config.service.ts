@@ -45,6 +45,10 @@ export class ConfigService {
     return this._activate_url;
   }
 
+  private _public_profile_url = this._api_url + '/users';
   
+  get public_profile_url(): string {
+    return this._public_profile_url;
+  }
 
 }

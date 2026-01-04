@@ -30,4 +30,8 @@ export class UserService {
     return this.apiService.get(this.config.users_url);
   }
 
+  getPublicProfile(userId: number): Observable<User> {
+    return this.apiService.get(`${this.config.public_profile_url}/${userId}/public`);
+  }
+
 }

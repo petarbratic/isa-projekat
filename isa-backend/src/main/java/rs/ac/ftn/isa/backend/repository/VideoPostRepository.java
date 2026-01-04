@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface VideoPostRepository extends JpaRepository<VideoPost, Long> {
     List<VideoPost> findAllByOrderByCreatedAtDesc();
+    List<VideoPost> findByOwner_IdOrderByCreatedAtDesc(Long ownerId);
 }

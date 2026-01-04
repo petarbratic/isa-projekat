@@ -104,7 +104,6 @@ public class VideoPostServiceImpl implements VideoPostService {
         return videoPostRepository.findAllByOrderByCreatedAtDesc();
     }
 
-
     @Cacheable(value = "thumbnails", key = "#videoId")
     public byte[] getThumbnail(Long videoId) throws IOException {
         VideoPost post = videoPostRepository.findById(videoId)
@@ -114,5 +113,10 @@ public class VideoPostServiceImpl implements VideoPostService {
 
     public Optional<VideoPost> findById(Long id) {
         return videoPostRepository.findById(id);
+    }
+
+    @Override
+    public List<VideoPost> findByOwnerId(Long ownerId) {
+        return videoPostRepository.findByOwner_IdOrderByCreatedAtDesc(ownerId);
     }
 }

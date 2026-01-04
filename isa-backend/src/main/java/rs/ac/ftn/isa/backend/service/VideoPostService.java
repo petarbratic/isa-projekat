@@ -21,4 +21,6 @@ public interface VideoPostService {
     byte[] getThumbnail(Long videoId) throws IOException;
 
     public Optional<VideoPost> findById(Long id);
+
+    List<VideoPost> findByOwnerId(Long ownerId);
 }

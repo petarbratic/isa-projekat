@@ -41,6 +41,7 @@ public class VideoCommentServiceImpl implements VideoCommentService {
                 .findByVideoPost_IdOrderByCreatedAtDesc(videoId, pageable)
                 .map(c -> new CommentResponse(
                         c.getId(),
+                        c.getUser().getId(),
                         c.getUser().getEmail(),
                         c.getUser().getFirstName() + " " + c.getUser().getLastName(),
                         c.getText(),
@@ -79,6 +80,7 @@ public class VideoCommentServiceImpl implements VideoCommentService {
 
         return new CommentResponse(
                 comment.getId(),
+                user.getId(),
                 user.getEmail(),
                 user.getFirstName() + " " + user.getLastName(),
                 comment.getText(),

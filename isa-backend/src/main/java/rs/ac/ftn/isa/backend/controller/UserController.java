@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rs.ac.ftn.isa.backend.model.User;
 import rs.ac.ftn.isa.backend.service.UserService;
+import rs.ac.ftn.isa.backend.dto.PublicUserDto;
+import rs.ac.ftn.isa.backend.service.VideoPostService;
+import rs.ac.ftn.isa.backend.model.VideoPost;
 
 
 // Primer kontrolera cijim metodama mogu pristupiti samo autorizovani korisnici
@@ -30,6 +33,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private VideoPostService videoPostService;
 
     // Za pristup ovoj metodi neophodno je da ulogovani korisnik ima ADMIN ulogu
     // Ukoliko nema, server ce vratiti gresku 403 Forbidden
@@ -59,4 +65,16 @@ public class UserController {
         fooObj.put("foo", "bar");
         return fooObj;
     }
+
+    @GetMapping("/users/{userId}/public")
+    public PublicUserDto publicProfile(@PathVariable Long userId) {
+        User u = this.userService.findById(userId);
+        return new PublicUserDto(u.getId(), u.getFirstName(), u.getLastName(), u.getEmail());
+    }
+
+    @GetMapping("/users/{userId}/videos")
+    public List<VideoPost> getUserVideos(@PathVariable Long userId) {
+        return videoPostService.findByOwnerId(userId);
+    }
+
 }
