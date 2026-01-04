@@ -1,0 +1,32 @@
+<div class="profile-page" *ngIf="!loading && user">
+  <div class="profile-card">
+    <h2 class="name">{{ user.firstName }} {{ user.lastName }}</h2>
+    <div class="email">{{ user.email }}</div>
+  </div>
+
+  <h3 class="section-title">Video zapisi</h3>
+
+  <div class="video-list" *ngIf="videos.length; else noVideos">
+    <div
+        class="video-card"
+        *ngFor="let video of videos"
+        [routerLink]="['/video', video.id]"
+    >
+        <img
+        class="thumbnail"
+        [src]="videoService.getThumbnail(video.id)"
+        alt="Video thumbnail"
+        />
+
+        <div class="video-title">
+        {{ video.title }}
+        </div>
+    </div>
+    </div>
+
+    <ng-template #noVideos>
+    <div class="empty">Ovaj korisnik još uvek nema objavljenih video zapisa.</div>
+    </ng-template>
+
+<div *ngIf="loading">Učitavanje...</div>
+<div class="error" *ngIf="error">{{ error }}</div>

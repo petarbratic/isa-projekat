@@ -5,5 +5,6 @@ export interface VideoPost {
   tags: string[];
   location?: string;
   createdAt: string;
-  owner?: any;
+  ownerId?: number;
+  ownerFullName?: string;
 }

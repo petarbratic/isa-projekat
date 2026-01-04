@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import rs.ac.ftn.isa.backend.dto.VideoPostRequest;
 import rs.ac.ftn.isa.backend.model.VideoPost;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
+import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
 
 @RestController
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,7 +34,7 @@ public class VideoPostController {
             value = "/videos",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createVideo(
             @RequestPart("data") VideoPostRequest request,
             @RequestPart("video") MultipartFile video,
@@ -71,9 +72,9 @@ public class VideoPostController {
 
 
     @GetMapping("/videos")
-    @PreAuthorize("isAuthenticated()")
-    public List<VideoPost> getAllVideos() {
-        return videoPostService.findAll();
+    //@PreAuthorize("isAuthenticated()")
+    public List<VideoPostResponse> getAllVideos() {
+        return videoPostService.findAllResponses();
     }
 
     @GetMapping(value = "/videos/{id}/thumbnail", produces = MediaType.IMAGE_PNG_VALUE)
@@ -87,9 +88,9 @@ public class VideoPostController {
     }
 
     @GetMapping("/videos/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<VideoPost> getVideoById(@PathVariable Long id) {
-        return videoPostService.findById(id)
+    //@PreAuthorize("isAuthenticated()")
+    public ResponseEntity<VideoPostResponse> getVideoById(@PathVariable Long id) {
+        return videoPostService.findResponseById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

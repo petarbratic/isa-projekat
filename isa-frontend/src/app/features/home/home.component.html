@@ -1,7 +1,6 @@
-<div *ngIf="!authService.tokenIsPresent()">
-  <p>Uloguj se da vidiš video snimke.</p>
+<div *ngIf="!authService.tokenIsPresent()" class="guest-info">
+  <p>Dobrodošli! Video zapise možete da gledate kao gost.
+  Prijavite se da biste mogli da lajkujete i komentarišete.</p>
 </div>
 
-<div *ngIf="authService.tokenIsPresent()">
-  <app-video-list></app-video-list>
-</div>
+<app-video-list></app-video-list>

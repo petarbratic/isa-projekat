@@ -118,6 +118,12 @@ video {
   font-weight: 700;
   font-size: 14px;
   margin-bottom: 2px;
+  text-decoration: none;
+  color: #0d6efd;
+}
+
+.comment-author:hover {
+  text-shadow: 0 0 4px rgba(13,110,253,0.4);
 }
 
 .comment-text {
@@ -185,4 +191,14 @@ video {
 .page-info {
   font-size: 14px;
   font-weight: 600;
+}
+
+.meta-link {
+  font-weight: 700;
+  color: #0d6efd;
+  text-decoration: none;
+}
+
+.meta-link:hover {
+  text-shadow: 0 0 4px rgba(13,110,253,0.4);
 }

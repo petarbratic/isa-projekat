@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { VideoService } from 'src/app/core/services/video.service';
 import { VideoPost } from '../videos/video.model';
 import { PageResponse, CommentResponse } from 'src/app/models/comment.model';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-video',
@@ -33,8 +34,15 @@ export class VideoComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    public videoService: VideoService
+    public videoService: VideoService,
+    public authService: AuthService
   ) {}
+
+  private requireLogin(message: string): boolean {
+    if (this.authService.tokenIsPresent()) return true;
+    this.commentError = message;
+    return false;
+  }
 
   ngOnInit(): void {
     this.videoId = Number(this.route.snapshot.paramMap.get('id'));
@@ -56,6 +64,8 @@ export class VideoComponent implements OnInit {
   }
 
   like(): void {
+    if (!this.requireLogin('You must be logged in to like posts.')) return;
+
     if (this.myReaction === 'like') {
       this.myReaction = null;
       this.likes--;
@@ -71,6 +81,8 @@ export class VideoComponent implements OnInit {
   }
 
   dislike(): void {
+    if (!this.requireLogin('You must be logged in to dislike posts.')) return;
+
     if (this.myReaction === 'dislike') {
       this.myReaction = null;
       this.dislikes--;
@@ -105,6 +117,8 @@ export class VideoComponent implements OnInit {
   }
 
   addComment(): void {
+    if (!this.requireLogin('You must be logged in to comment posts.')) return;
+
     const text = this.newComment?.trim() ?? '';
 
     if (!text) {

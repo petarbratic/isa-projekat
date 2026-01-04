@@ -55,4 +55,8 @@ export class VideoService {
     );
   }
 
+  getByUser(userId: number): Observable<VideoPost[]> {
+    return this.http.get<VideoPost[]>(`${this.apiUrl}/users/${userId}/videos`);
+  }
+
 }

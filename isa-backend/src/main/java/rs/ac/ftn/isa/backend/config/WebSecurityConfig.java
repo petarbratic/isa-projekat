@@ -107,6 +107,8 @@ public class WebSecurityConfig {
                         "/api/videos/**"
                 ).permitAll()
 
+                .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
+
                 // za svaki drugi zahtev korisnik mora biti autentifikovan
                 .anyRequest().authenticated()
         );
