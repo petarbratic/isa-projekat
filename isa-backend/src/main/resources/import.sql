@@ -22,3 +22,4 @@ INSERT INTO video_tags (video_id, tag) VALUES (3, 'iuzui');
 INSERT INTO video_tags (video_id, tag) VALUES (4, 'nbvnbv');
 INSERT INTO video_tags (video_id, tag) VALUES (5, 'hghfggh');
 
+SELECT setval(pg_get_serial_sequence('video_posts','id'), (SELECT MAX(id) FROM video_posts), true);

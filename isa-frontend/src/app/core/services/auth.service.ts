@@ -81,7 +81,6 @@ export class AuthService {
     this.userService.currentUser = null;
     localStorage.removeItem('jwt');
     this.access_token = null;
-    window.location.reload();
   }
 
   tokenIsPresent(): boolean {
