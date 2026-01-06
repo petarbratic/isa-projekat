@@ -14,6 +14,7 @@ public class VideoPostResponse {
 
     private Long ownerId;
     private String ownerFullName;
+    private long views;
 
     public VideoPostResponse() {}
 
@@ -37,6 +38,10 @@ public class VideoPostResponse {
 
     public Long getOwnerId() { return ownerId; }
     public void setOwnerId(Long ownerId) { this.ownerId = ownerId; }
+
+    public long getViews() { return views;  }
+
+    public void setViews(long views) { this.views = views; }
 
     public String getOwnerFullName() { return ownerFullName; }
     public void setOwnerFullName(String ownerFullName) { this.ownerFullName = ownerFullName; }

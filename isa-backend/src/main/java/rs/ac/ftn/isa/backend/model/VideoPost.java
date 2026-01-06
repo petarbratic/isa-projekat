@@ -39,6 +39,10 @@ public class VideoPost {
     @Column(name = "location")
     private String location;
 
+    @Column(name = "views", nullable = false)
+    private long views = 0;
+
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
@@ -106,6 +110,11 @@ public class VideoPost {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    public long getViews() {  return views;  }
+
+    public void setViews(long views) { this.views = views; }
+
 
     public User getOwner() {
         return owner;

@@ -90,6 +90,7 @@ public class VideoPostController {
     @GetMapping("/videos/{id}")
     //@PreAuthorize("isAuthenticated()")
     public ResponseEntity<VideoPostResponse> getVideoById(@PathVariable Long id) {
+        videoPostService.incrementViews(id);
         return videoPostService.findResponseById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
