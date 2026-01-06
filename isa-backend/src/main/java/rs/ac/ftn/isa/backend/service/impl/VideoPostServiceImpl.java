@@ -143,7 +143,7 @@ public class VideoPostServiceImpl implements VideoPostService {
 
             dto.setOwnerFullName(fullName);
         }
-
+        dto.setViews(post.getViews());
         return dto;
     }
 
@@ -156,5 +156,11 @@ public class VideoPostServiceImpl implements VideoPostService {
 
     public Optional<VideoPostResponse> findResponseById(Long id) {
         return videoPostRepository.findById(id).map(this::toResponse);
+    }
+
+    @Override
+    @Transactional
+    public void incrementViews(Long videoId) {
+        videoPostRepository.incrementViews(videoId);
     }
 }

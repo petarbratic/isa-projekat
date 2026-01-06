@@ -27,4 +27,5 @@ public interface VideoPostService {
 
     List<VideoPostResponse> findAllResponses();
     Optional<VideoPostResponse> findResponseById(Long id);
+    void incrementViews(Long videoId);
 }
