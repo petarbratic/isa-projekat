@@ -16,6 +16,9 @@ public class VideoPostResponse {
     private String ownerFullName;
     private long views;
 
+    private long likesCount;
+    private boolean isLikedByMe;
+
     public VideoPostResponse() {}
 
     public Long getId() { return id; }
@@ -45,4 +48,10 @@ public class VideoPostResponse {
 
     public String getOwnerFullName() { return ownerFullName; }
     public void setOwnerFullName(String ownerFullName) { this.ownerFullName = ownerFullName; }
+
+    public long getLikesCount() { return likesCount; }
+    public void setLikesCount(long likesCount) { this.likesCount = likesCount; }
+
+    public boolean isLikedByMe() { return isLikedByMe; }
+    public void setLikedByMe(boolean likedByMe) { isLikedByMe = likedByMe; }
 }

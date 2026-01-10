@@ -39,17 +39,11 @@
     </div>
   </div>
 
-  <div class="actions">
+  <div class="actions" *ngIf="video">
     <button
-      (click)="like()"
-      [class.active]="myReaction === 'like'">
-      Like {{ likes }}
-    </button>
-
-    <button
-      (click)="dislike()"
-      [class.active]="myReaction === 'dislike'">
-      Dislike {{ dislikes }}
+      (click)="toggleLike()"
+      [class.active]="video.isLikedByMe">
+      Like {{ video.likesCount }}
     </button>
   </div>
 

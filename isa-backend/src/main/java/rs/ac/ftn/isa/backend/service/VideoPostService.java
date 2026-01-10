@@ -26,6 +26,6 @@ public interface VideoPostService {
     List<VideoPost> findByOwnerId(Long ownerId);
 
     List<VideoPostResponse> findAllResponses();
-    Optional<VideoPostResponse> findResponseById(Long id);
+    Optional<VideoPostResponse> findResponseById(Long id, String viewerEmail);
     void incrementViews(Long videoId);
 }
