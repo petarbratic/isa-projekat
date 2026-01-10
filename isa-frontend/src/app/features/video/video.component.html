@@ -30,6 +30,9 @@
     <div *ngIf="video.createdAt" class="meta-row">
       <strong>Created:</strong> {{ video.createdAt | date:'medium' }}
     </div>
+    <div *ngIf="video.views !== undefined" class="meta-row">
+  <strong>Views:</strong> {{ video.views }}
+</div>
 
     <div *ngIf="video.location" class="meta-row">
       <strong>Location:</strong> {{ video.location }}

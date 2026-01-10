@@ -7,4 +7,5 @@ export interface VideoPost {
   createdAt: string;
   ownerId?: number;
   ownerFullName?: string;
+  views: number;
 }
