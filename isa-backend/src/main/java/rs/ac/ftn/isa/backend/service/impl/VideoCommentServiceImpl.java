@@ -1,8 +1,6 @@
 package rs.ac.ftn.isa.backend.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,10 +30,7 @@ public class VideoCommentServiceImpl implements VideoCommentService {
     @Autowired private UserRepository userRepository;
 
     @Override
-    @Cacheable(
-            value = "videoComments",
-            key = "'v:' + #videoId + ':p:' + #pageable.pageNumber + ':s:' + #pageable.pageSize"
-    )
+    @Transactional(readOnly = true)
     public Page<CommentResponse> getComments(Long videoId, Pageable pageable) {
         return commentRepository
                 .findByVideoPost_IdOrderByCreatedAtDesc(videoId, pageable)
@@ -51,7 +46,6 @@ public class VideoCommentServiceImpl implements VideoCommentService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "videoComments", allEntries = true)
     public CommentResponse addComment(Long videoId, String userEmail, String text) {
 
         if (text == null || text.trim().isEmpty()) {

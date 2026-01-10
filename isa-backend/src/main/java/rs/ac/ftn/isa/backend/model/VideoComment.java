@@ -2,7 +2,12 @@ package rs.ac.ftn.isa.backend.model;
 
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import jakarta.persistence.Cacheable;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "VIDEO_COMMENTS")
 public class VideoComment {
@@ -10,6 +15,10 @@ public class VideoComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private Long version;
 
     @Column(name="text", nullable = false, length = 2000)
     private String text;
