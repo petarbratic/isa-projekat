@@ -28,7 +28,7 @@ INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) V
 INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) VALUES (1, 5, 'Kako si birao tempo? Deluje baš pogođeno.', '2026-01-11 12:01:21.000', 0);
 INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) VALUES (2, 5, 'Sviđa mi se interpretacija, mnogo je prirodno.', '2026-01-11 12:01:35.000', 0);
 INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) VALUES (3, 5, 'Može neki tutorial sledeći put?', '2026-01-11 12:01:49.000', 0);
-INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) VALUES (1, 5, 'Odličan video za test paginacije komentara.', '2026-01-11 12:02:03.000', 0);
+INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) VALUES (1, 5, 'Odličan video, svaka čast.', '2026-01-11 12:02:03.000', 0);
 INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) VALUES (2, 1, 'Odličan video, vratio me u detinjstvo!', '2026-01-11 11:15:49.479', 0);
 INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) VALUES (3, 1, 'Jednostavno i lepo objašnjeno, svaka čast.', '2026-01-11 11:17:02.112', 0);
 INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) VALUES (1, 2, 'Baš lep zvuk harmonike, podseća na stare dane.', '2026-01-11 11:18:44.905', 0);

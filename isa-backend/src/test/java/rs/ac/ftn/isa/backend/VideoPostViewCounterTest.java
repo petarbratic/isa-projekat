@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import rs.ac.ftn.isa.backend.model.VideoPost;
 import rs.ac.ftn.isa.backend.repository.VideoPostRepository;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
@@ -13,8 +14,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @SpringBootTest
+@TestPropertySource(properties = {
+        "spring.jpa.properties.hibernate.cache.use_second_level_cache=false",
+        "spring.jpa.properties.hibernate.cache.use_query_cache=false"
+})
+
 class VideoPostViewCounterTest {
 
     @Autowired
