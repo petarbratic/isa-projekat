@@ -8,10 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.ftn.isa.backend.dto.UserRequest;
-import rs.ac.ftn.isa.backend.model.Role;
 import rs.ac.ftn.isa.backend.model.User;
 import rs.ac.ftn.isa.backend.repository.UserRepository;
-import rs.ac.ftn.isa.backend.service.RoleService;
 import rs.ac.ftn.isa.backend.service.UserService;
 
 
@@ -23,9 +21,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private RoleService roleService;
 
     @Override
     public User findByUsername(String username) throws UsernameNotFoundException {
@@ -59,9 +54,6 @@ public class UserServiceImpl implements UserService {
         u.setEnabled(false);
         u.setEmail(userRequest.getEmail());
         u.setAddress(userRequest.getAddress());
-        // u primeru se registruju samo obicni korisnici i u skladu sa tim im se i dodeljuje samo rola USER
-        List<Role> roles = roleService.findByName("ROLE_USER");
-        u.setRoles(roles);
         u.setActivationToken(java.util.UUID.randomUUID().toString());
 
         return this.userRepository.save(u);

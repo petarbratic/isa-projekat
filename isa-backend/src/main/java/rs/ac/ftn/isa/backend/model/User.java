@@ -55,12 +55,6 @@ public class User implements UserDetails {
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles;
-
     public Long getId() {
         return id;
     }
@@ -103,18 +97,10 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles;
+        return List.of();
     }
 
     public String getEmail() {
