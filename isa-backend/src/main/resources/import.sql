@@ -3,11 +3,13 @@
 
 INSERT INTO USERS (username, password, first_name, last_name, email, address, enabled, last_password_reset_date) VALUES ('user', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'Marko', 'Markovic', 'user@example.com', 'adresa1', true, '2017-10-01 21:58:58.508-07');
 INSERT INTO USERS (username, password, first_name, last_name, email, address, enabled, last_password_reset_date) VALUES ('user2', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'Nikola', 'Nikolic', 'user2@example.com', 'adresa2', true, '2017-10-01 18:57:58.508-07');
+INSERT INTO USERS (username, password, first_name, last_name, email, address, enabled, last_password_reset_date) VALUES ('user3', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'Petar', 'Petrovic', 'user3@example.com', 'adresa3', true, '2017-10-01 18:57:58.508-07');
 
 INSERT INTO ROLE (name) VALUES ('ROLE_USER');
 
 INSERT INTO USER_ROLE (user_id, role_id) VALUES (1, 1); -- user-u dodeljujemo rolu USER
 INSERT INTO USER_ROLE (user_id, role_id) VALUES (2, 1); -- admin-u dodeljujemo rolu USER
+INSERT INTO USER_ROLE (user_id, role_id) VALUES (3, 1); -- ovo treba izbaciti...
 --INSERT INTO USER_ROLE (user_id, role_id) VALUES (2, 1); -- user-u dodeljujemo rolu ADMIN - ne vise
 
 INSERT INTO video_posts (id, owner_id, title, description, location, thumbnail_path, video_path, created_at, views) VALUES (1, 1, 'Cocomelon Theme | BEGINNER PIANO TUTORIAL + SHEET MUSIC by Betacustic', 'In this piano tutorial you can learn HOW TO PLAY "Cocomelon Theme" by Cocomelon, BEGINNER version', 'Novi Sad', 'uploads\\thumbnails\\1.png', 'uploads\\videos\\1.mp4', '2026-01-03 14:58:38.322',0);

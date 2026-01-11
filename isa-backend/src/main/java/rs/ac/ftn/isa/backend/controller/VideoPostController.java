@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import rs.ac.ftn.isa.backend.dto.VideoPostRequest;
 import rs.ac.ftn.isa.backend.model.VideoPost;
+import rs.ac.ftn.isa.backend.service.VideoLikeService;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
 
@@ -29,6 +30,9 @@ public class VideoPostController {
 
     @Autowired
     private VideoPostService videoPostService;
+
+    @Autowired
+    private VideoLikeService videoLikeService;
 
     @PostMapping(
             value = "/videos",
@@ -88,11 +92,27 @@ public class VideoPostController {
     }
 
     @GetMapping("/videos/{id}")
-    //@PreAuthorize("isAuthenticated()")
-    public ResponseEntity<VideoPostResponse> getVideoById(@PathVariable Long id) {
+    public ResponseEntity<VideoPostResponse> getVideoById(@PathVariable Long id, Principal principal) {
         videoPostService.incrementViews(id);
-        return videoPostService.findResponseById(id)
+
+        String viewerEmail = (principal != null) ? principal.getName() : null;
+
+        return videoPostService.findResponseById(id, viewerEmail)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/videos/{id}/likes")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> likeVideo(@PathVariable Long id, Principal principal) {
+        videoLikeService.like(id, principal.getName());
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/videos/{id}/likes")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> unlikeVideo(@PathVariable Long id, Principal principal) {
+        videoLikeService.unlike(id, principal.getName());
+        return ResponseEntity.ok().build();
     }
 }

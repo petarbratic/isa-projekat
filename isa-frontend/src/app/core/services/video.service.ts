@@ -59,4 +59,11 @@ export class VideoService {
     return this.http.get<VideoPost[]>(`${this.apiUrl}/users/${userId}/videos`);
   }
 
+  toggleLike(videoId: number, shouldLike: boolean): Observable<void> {
+    const url = `${this.apiUrl}/videos/${videoId}/likes`;
+    return shouldLike
+      ? this.http.post<void>(url, {})
+      : this.http.delete<void>(url);
+  }
+
 }

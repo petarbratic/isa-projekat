@@ -15,10 +15,6 @@ export class VideoComponent implements OnInit {
   videoId!: number;
   video: VideoPost | null = null;
 
-  likes = 0;
-  dislikes = 0;
-  myReaction: 'like' | 'dislike' | null = null;
-
   newComment = '';
 
   comments: CommentResponse[] = [];
@@ -47,8 +43,6 @@ export class VideoComponent implements OnInit {
   ngOnInit(): void {
     this.videoId = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.loadReactionsMock();
-
     this.videoService.getById(this.videoId).subscribe({
       next: (v) => this.video = v,
       error: (err) => console.error('Failed to load video:', err)
@@ -57,44 +51,26 @@ export class VideoComponent implements OnInit {
     this.loadComments(0);
   }
 
-  private loadReactionsMock(): void {
-    this.likes = 12;
-    this.dislikes = 3;
-    this.myReaction = null;
-  }
-
-  like(): void {
+  toggleLike(): void {
+    if (!this.video) return;
     if (!this.requireLogin('You must be logged in to like posts.')) return;
 
-    if (this.myReaction === 'like') {
-      this.myReaction = null;
-      this.likes--;
-      return;
-    }
+    const prevLiked = this.video.isLikedByMe;
+    const prevCount = this.video.likesCount;
 
-    if (this.myReaction === 'dislike') {
-      this.dislikes--;
-    }
+    // optimistic update
+    this.video.isLikedByMe = !this.video.isLikedByMe;
+    this.video.likesCount += this.video.isLikedByMe ? 1 : -1;
 
-    this.myReaction = 'like';
-    this.likes++;
-  }
-
-  dislike(): void {
-    if (!this.requireLogin('You must be logged in to dislike posts.')) return;
-
-    if (this.myReaction === 'dislike') {
-      this.myReaction = null;
-      this.dislikes--;
-      return;
-    }
-
-    if (this.myReaction === 'like') {
-      this.likes--;
-    }
-
-    this.myReaction = 'dislike';
-    this.dislikes++;
+    this.videoService.toggleLike(this.video.id, this.video.isLikedByMe).subscribe({
+      next: () => {},
+      error: () => {
+        // rollback
+        this.video!.isLikedByMe = prevLiked;
+        this.video!.likesCount = prevCount;
+        this.commentError = 'Failed to like the video.';
+      }
+    });
   }
 
   loadComments(page: number): void {
