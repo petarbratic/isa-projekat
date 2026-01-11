@@ -36,25 +36,8 @@ public class UserController {
 
     @Autowired
     private VideoPostService videoPostService;
-
-    // Za pristup ovoj metodi neophodno je da ulogovani korisnik ima ADMIN ulogu
-    // Ukoliko nema, server ce vratiti gresku 403 Forbidden
-    // Korisnik jeste autentifikovan, ali nije autorizovan da pristupi resursu
-    @GetMapping("/user/{userId}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
-
-    public User loadById(@PathVariable Long userId) {
-        return this.userService.findById(userId);
-    }
-
-    @GetMapping("/user/all")
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<User> loadAll() {
-        return this.userService.findAll();
-    }
-
+    
     @GetMapping("/whoami")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public User user(Principal user) {
         return this.userService.findByEmail(user.getName());
     }
