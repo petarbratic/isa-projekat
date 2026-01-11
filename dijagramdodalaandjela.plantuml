@@ -1,0 +1,87 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class transcoding_jobs {
+   attempt_count: integer
+   created_at: timestamp(6)
+   finished_at: timestamp(6)
+   started_at: timestamp(6)
+   video_post_id: bigint
+   input_path: varchar(255)
+   message_id: varchar(255)
+   status: varchar(255)
+   id: bigint
+}
+class users {
+   enabled: boolean
+   last_password_reset_date: timestamp(6)
+   activation_token: varchar(255)
+   address: varchar(255)
+   email: varchar(255)
+   first_name: varchar(255)
+   last_name: varchar(255)
+   password: varchar(255)
+   username: varchar(255)
+   id: bigint
+}
+class video_comments {
+   created_at: timestamp(6)
+   user_id: bigint
+   version: bigint
+   video_post_id: bigint
+   text: varchar(2000)
+   id: bigint
+}
+class video_likes {
+   created_at: timestamp(6)
+   user_id: bigint
+   video_id: bigint
+   id: bigint
+}
+class video_posts {
+   created_at: timestamp(6)
+   owner_id: bigint
+   views: bigint
+   description: varchar(2000)
+   location: varchar(255)
+   thumbnail_path: varchar(255)
+   title: varchar(255)
+   video_path: varchar(255)
+   id: bigint
+}
+class video_tags {
+   video_id: bigint
+   tag: varchar(255)
+}
+class watch_party_members {
+   joined_at: timestamp(6)
+   room_id: bigint
+   user_id: bigint
+   role: varchar(255)
+   id: bigint
+}
+class watch_party_rooms {
+   is_public: boolean
+   active_video_id: bigint
+   created_at: timestamp(6)
+   host_id: bigint
+   join_code: varchar(255)
+   status: varchar(255)
+   id: bigint
+}
+
+transcoding_jobs     -[#595959,plain]-^  video_posts         : "video_post_id:id"
+video_comments       -[#595959,plain]-^  users               : "user_id:id"
+video_comments       -[#595959,plain]-^  video_posts         : "video_post_id:id"
+video_likes          -[#595959,plain]-^  users               : "user_id:id"
+video_likes          -[#595959,plain]-^  video_posts         : "video_id:id"
+video_posts          -[#595959,plain]-^  users               : "owner_id:id"
+video_tags           -[#595959,plain]-^  video_posts         : "video_id:id"
+watch_party_members  -[#595959,plain]-^  users               : "user_id:id"
+watch_party_members  -[#595959,plain]-^  watch_party_rooms   : "room_id:id"
+watch_party_rooms    -[#595959,plain]-^  users               : "host_id:id"
+watch_party_rooms    -[#595959,plain]-^  video_posts         : "active_video_id:id"
+@enduml
