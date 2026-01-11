@@ -9,5 +9,5 @@ export interface VideoPost {
   ownerFullName?: string;
   views: number;
   likesCount: number;
-  isLikedByMe: boolean;
+  likedByMe: boolean;
 }

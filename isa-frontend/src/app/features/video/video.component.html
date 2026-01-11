@@ -42,7 +42,7 @@
   <div class="actions" *ngIf="video">
     <button
       (click)="toggleLike()"
-      [class.active]="video.isLikedByMe">
+      [class.active]="video.likedByMe">
       Like {{ video.likesCount }}
     </button>
   </div>

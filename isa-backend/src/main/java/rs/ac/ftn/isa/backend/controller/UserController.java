@@ -36,7 +36,7 @@ public class UserController {
 
     @Autowired
     private VideoPostService videoPostService;
-    
+
     @GetMapping("/whoami")
     public User user(Principal user) {
         return this.userService.findByEmail(user.getName());

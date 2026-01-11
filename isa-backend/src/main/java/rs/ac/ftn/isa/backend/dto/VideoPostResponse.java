@@ -17,7 +17,7 @@ public class VideoPostResponse {
     private long views;
 
     private long likesCount;
-    private boolean isLikedByMe;
+    private boolean likedByMe;
 
     public VideoPostResponse() {}
 
@@ -52,6 +52,6 @@ public class VideoPostResponse {
     public long getLikesCount() { return likesCount; }
     public void setLikesCount(long likesCount) { this.likesCount = likesCount; }
 
-    public boolean isLikedByMe() { return isLikedByMe; }
-    public void setLikedByMe(boolean likedByMe) { isLikedByMe = likedByMe; }
+    public boolean isLikedByMe() { return likedByMe; }
+    public void setLikedByMe(boolean isLikedByMe) { likedByMe = isLikedByMe; }
 }

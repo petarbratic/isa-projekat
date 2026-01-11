@@ -55,18 +55,18 @@ export class VideoComponent implements OnInit {
     if (!this.video) return;
     if (!this.requireLogin('You must be logged in to like posts.')) return;
 
-    const prevLiked = this.video.isLikedByMe;
+    const prevLiked = this.video.likedByMe;
     const prevCount = this.video.likesCount;
 
     // optimistic update
-    this.video.isLikedByMe = !this.video.isLikedByMe;
-    this.video.likesCount += this.video.isLikedByMe ? 1 : -1;
+    this.video.likedByMe = !this.video.likedByMe;
+    this.video.likesCount += this.video.likedByMe ? 1 : -1;
 
-    this.videoService.toggleLike(this.video.id, this.video.isLikedByMe).subscribe({
+    this.videoService.toggleLike(this.video.id, this.video.likedByMe).subscribe({
       next: () => {},
       error: () => {
         // rollback
-        this.video!.isLikedByMe = prevLiked;
+        this.video!.likedByMe = prevLiked;
         this.video!.likesCount = prevCount;
         this.commentError = 'Failed to like the video.';
       }
