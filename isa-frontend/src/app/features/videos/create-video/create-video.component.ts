@@ -69,7 +69,7 @@ export class CreateVideoComponent {
         if (err?.error?.message) {
           this.errorMessage = err.error.message;
         } else {
-          this.errorMessage = 'Neuspešan upload videa. Pokušajte ponovo.';
+          this.errorMessage = 'Video ima više od 200MB. Neuspešan upload videa. Pokušajte ponovo.';
         }
       }
     });

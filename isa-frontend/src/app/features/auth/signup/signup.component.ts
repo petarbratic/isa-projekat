@@ -75,7 +75,7 @@ export class SignupComponent implements OnInit {
       confirmPassword: ['', Validators.required],
       firstname: [''],
       lastname: [''],
-      address: ['', [Validators.required, Validators.maxLength(256)]],
+      address: ['', [Validators.required, Validators.maxLength(256), Validators.minLength(8)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(128)]]
     },
     { validators: passwordMatchValidator() }
