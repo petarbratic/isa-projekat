@@ -20,6 +20,7 @@ import rs.ac.ftn.isa.backend.model.User;
 import rs.ac.ftn.isa.backend.model.VideoPost;
 import rs.ac.ftn.isa.backend.repository.UserRepository;
 import rs.ac.ftn.isa.backend.repository.VideoPostRepository;
+import rs.ac.ftn.isa.backend.service.VideoLikeService;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
 
@@ -31,6 +32,9 @@ public class VideoPostServiceImpl implements VideoPostService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private VideoLikeService videoLikeService;
 
     private final String VIDEO_DIR = "uploads/videos/";
     private final String THUMB_DIR = "uploads/thumbnails/";
@@ -163,4 +167,29 @@ public class VideoPostServiceImpl implements VideoPostService {
     public void incrementViews(Long videoId) {
         videoPostRepository.incrementViews(videoId);
     }
+
+    private VideoPostResponse toResponse(VideoPost post, String viewerEmail) {
+        VideoPostResponse dto = toResponse(post); // koristi postojeće mapiranje
+
+        long likesCount = videoLikeService.getLikesCount(post.getId());
+        dto.setLikesCount(likesCount);
+
+        boolean likedByMe = false;
+        if (viewerEmail != null) {
+            User viewer = userRepository.findByEmail(viewerEmail);
+            if (viewer != null) {
+                likedByMe = videoLikeService.isLikedByUser(post.getId(), viewer.getId());
+            }
+        }
+        dto.setLikedByMe(likedByMe);
+
+        return dto;
+    }
+
+    public Optional<VideoPostResponse> findResponseById(Long id, String viewerEmail) {
+        return videoPostRepository.findById(id).map(p -> toResponse(p, viewerEmail));
+    }
+
+
+
 }

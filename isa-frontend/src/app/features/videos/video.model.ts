@@ -8,4 +8,6 @@ export interface VideoPost {
   ownerId?: number;
   ownerFullName?: string;
   views: number;
+  likesCount: number;
+  isLikedByMe: boolean;
 }
