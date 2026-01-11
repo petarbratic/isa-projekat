@@ -24,12 +24,31 @@ import { ApiService } from './core/services/api.service';
 import { UserService } from './core/services/user.service';
 import { ConfigService } from './core/services/config.service';
 
+import { VideoListComponent } from './features/videos/video-list/video-list.component';
+import { CreateVideoComponent } from './features/videos/create-video/create-video.component';
+
+
+import { ActivateComponent } from './features/auth/activate/activate.component';
+import { VideoComponent } from './features/video/video.component';
+
+import { FormsModule } from '@angular/forms';
+import { ShellComponent } from './layout/shell/shell.component';
+import { UserProfileComponent } from './features/user-profile/user-profile.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     SignupComponent,
-    LoginComponent
+    LoginComponent,
+
+    CreateVideoComponent,
+    VideoListComponent,
+
+    ActivateComponent,
+    VideoComponent,
+    ShellComponent,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +60,8 @@ import { ConfigService } from './core/services/config.service';
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    FormsModule
   ],
   providers: [
     {

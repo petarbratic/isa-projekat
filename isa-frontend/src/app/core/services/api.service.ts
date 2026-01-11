@@ -38,6 +38,13 @@ export class ApiService {
       .pipe(catchError(this.checkError.bind(this)));
   }
 
+  getText(path: string): Observable<string> {
+    return this.http.get(path, {
+        headers: this.headers,
+        responseType: 'text' as 'text'
+    }) as Observable<string>;
+    }
+
   post(path: string, body: any, customHeaders?: HttpHeaders): Observable<any> {
     return this.request(path, body, RequestMethod.Post, customHeaders);
   }
@@ -81,4 +88,5 @@ export class ApiService {
     return a === '' || a === null || a === undefined;
   }
 
+  
 }

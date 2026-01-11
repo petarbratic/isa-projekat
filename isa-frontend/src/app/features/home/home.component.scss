@@ -1,44 +1,24 @@
-.app-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-
-  height: 60px;
-  padding: 0 24px;
-
+.guest-info {
+  background: #f4f7fb;                 
+  border: 1px solid #dbe3ef;
+  color: #111;                                   
+  padding: 18px 22px; 
+  border-radius: 12px;
+  margin: 20px auto 28px;
+  max-width: 920px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-
-  background-color: #ffffff;
-  border-bottom: 1px solid #ddd;
-
-  z-index: 1000;
+  justify-content: center;             
+  text-align: center;                  
+  font-size: 14.5px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.header-left {
-  flex: 1;
-}
-
-.header-center {
-  flex: 1;
-  text-align: center;
-}
-
-.header-right {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.logo {
-  margin: 0;
-  font-size: 20px;
-}
-
-.content {
-  margin-top: 60px; // da sadržaj ne uđe ispod headera
-  padding: 16px;
+.guest-info p {
+  margin: 0;              
+  line-height: 1.4;      
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
 }

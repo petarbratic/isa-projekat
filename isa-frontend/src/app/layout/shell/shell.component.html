@@ -1,0 +1,33 @@
+<header class="app-header">
+  <div class="header-left" routerLink="/">
+  <img
+    src="assets/logo.png"
+    alt="Youtubic logo"
+    class="logo-img"
+  />
+  <h1 class="logo-text">Youtubic</h1>
+</div>
+
+  <div class="header-center">
+    <!-- kasnije search -->
+  </div>
+
+  <div class="header-right" *ngIf="!authService.tokenIsPresent()">
+    <button class="btn" routerLink="/login">Login</button>
+    <button class="btn btn-primary" routerLink="/signup">Sign up</button>
+  </div>
+
+  <div class="header-right" *ngIf="authService.tokenIsPresent()">
+    <span class="user-name user-link" *ngIf="userService.currentUser as u; else loadingUser" [routerLink]="['/profile', u.id]">
+      {{ userService.currentUser.firstName }} {{ userService.currentUser.lastName }}
+    </span>
+    <ng-template #loadingUser>Loading...</ng-template>
+
+    <button class="icon-btn" routerLink="/upload" title="Upload video">+</button>
+    <button class="btn" (click)="logout()">Logout</button>
+  </div>
+</header>
+
+<main class="content">
+  <router-outlet></router-outlet>
+</main>

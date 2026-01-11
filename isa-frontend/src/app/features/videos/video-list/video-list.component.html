@@ -1,0 +1,18 @@
+<div class="video-list">
+  <div
+    class="video-card"
+    *ngFor="let video of videos"
+    [routerLink]="['/video', video.id]"
+  >
+    <img
+      class="thumbnail"
+      [src]="videoService.getThumbnail(video.id)"
+      alt="Video thumbnail"
+    />
+
+    <div class="video-title">
+      {{ video.title }}
+    </div>
+    
+  </div>
+</div>

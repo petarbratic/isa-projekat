@@ -1,37 +1,6 @@
-<header class="app-header">
-  <!-- Levo -->
-  <div class="header-left">
-    <h1 class="logo">Youtubic</h1>
-  </div>
+<div *ngIf="!authService.tokenIsPresent()" class="guest-info">
+  <p>Dobrodošli! Video zapise možete da gledate kao gost.
+  Prijavite se da biste mogli da lajkujete i komentarišete.</p>
+</div>
 
-  <!-- Sredina (rezervisano za search bar) -->
-  <div class="header-center">
-    <!-- ovde kasnije ide search bar -->
-  </div>
-
-  <!-- Desno (guest) -->
-  <div class="header-right" *ngIf="!authService.tokenIsPresent()">
-    <button routerLink="/login">Login</button>
-    <button routerLink="/signup">Sign up</button>
-  </div>
-
-  <!-- Desno (ulogovan) -->
-  <div class="header-right" *ngIf="authService.tokenIsPresent()">
-    <span>
-      {{ userService.currentUser?.firstName }} {{ userService.currentUser?.lastName }}
-    </span>
-    <button (click)="logout()">Logout</button>
-  </div>
-</header>
-
-<main class="content">
-  <!-- Nije ulogovan -->
-  <div *ngIf="!authService.tokenIsPresent()">
-    <p>Home feed (guest)</p>
-  </div>
-
-  <!-- Ulogovan -->
-  <div *ngIf="authService.tokenIsPresent()">
-    <p>Home feed (authenticated)</p>
-  </div>
-</main>
+<app-video-list></app-video-list>

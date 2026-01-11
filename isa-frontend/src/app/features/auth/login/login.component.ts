@@ -1,11 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { UserService } from 'src/app/core/services/user.service';
-import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
-
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 interface DisplayMessage {
   msgType: string;
@@ -17,26 +16,15 @@ interface DisplayMessage {
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   title = 'Login';
   form!: FormGroup;
 
-  /**
-   * Boolean used in telling the UI
-   * that the form has been submitted
-   * and is awaiting a response
-   */
   submitted = false;
+  notification?: DisplayMessage;
+  returnUrl!: string;
 
-   /**
-   * Notification message from received
-   * form request or router
-   */
-    notification!: DisplayMessage;
-
-    returnUrl!: string;
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
-
+  private ngUnsubscribe = new Subject<void>();
 
   constructor(
     private userService: UserService,
@@ -44,46 +32,58 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder
-  ) { }
+  ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.route.params
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((params: any) => {
         this.notification = params as DisplayMessage;
       });
-    // get return url from route parameters or default to '/'
+
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
     this.form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email, Validators.maxLength(128)]],
-      password: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(32)])]
+      password: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(32)]]
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
 
-  onSubmit() {
-    /**
-     * Innocent until proven guilty
-     */
-    
-    this.notification;
+  onSubmit(): void {
+    if (this.form.invalid) return;
+
+    this.notification = undefined;
     this.submitted = true;
 
-    this.authService.login(this.form.value)
-      .subscribe(data => {
-        console.log(data);
-          this.userService.getMyInfo().subscribe();
-          this.router.navigate([this.returnUrl]);
-        },
-        error => {
-          console.log(error);
-          this.submitted = false;
-          this.notification = {msgType: 'error', msgBody: 'Incorrect username or password.'};
-        });
-  }
+    this.authService.login(this.form.value).subscribe({
+      next: () => {
+        console.log('Logged in, token:', this.authService.getToken());
 
+        // odmah dobijemo info o korisniku
+        this.userService.getMyInfo().subscribe({
+          next: (user) => console.log('User info:', user),
+          error: (err) => console.error('Failed to fetch user info:', err)
+        });
+
+        this.submitted = false;
+        this.router.navigate([this.returnUrl]);
+      },
+      error: (err) => {
+        console.error('Login failed:', err);
+        this.submitted = false;
+
+        const msg =
+          typeof err?.error === 'string'
+            ? err.error
+            : (err?.error?.message ?? 'Incorrect email or password.');
+
+        this.notification = { msgType: 'error', msgBody: msg };
+      }
+    });
+  }
 }

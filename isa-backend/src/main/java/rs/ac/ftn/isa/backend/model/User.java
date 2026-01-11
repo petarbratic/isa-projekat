@@ -43,17 +43,17 @@ public class User implements UserDetails {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "address")
+    private String address;
+
     @Column(name = "enabled")
     private boolean enabled;
 
+    @Column(name = "activation_token", unique = true)
+    private String activationToken;
+
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles;
 
     public Long getId() {
         return id;
@@ -97,18 +97,10 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles;
+        return List.of();
     }
 
     public String getEmail() {
@@ -119,6 +111,14 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     @Override
     public boolean isEnabled() {
         return enabled;
@@ -126,6 +126,14 @@ public class User implements UserDetails {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getActivationToken() {
+        return activationToken;
+    }
+
+    public void setActivationToken(String activationToken) {
+        this.activationToken = activationToken;
     }
 
     public Timestamp getLastPasswordResetDate() {

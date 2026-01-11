@@ -39,4 +39,16 @@ export class ConfigService {
     return this._signup_url;
   }
 
+  private _activate_url = this._auth_url + '/activate';
+
+  get activate_url(): string {
+    return this._activate_url;
+  }
+
+  private _public_profile_url = this._api_url + '/users';
+  
+  get public_profile_url(): string {
+    return this._public_profile_url;
+  }
+
 }

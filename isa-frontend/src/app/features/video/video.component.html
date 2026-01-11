@@ -1,0 +1,95 @@
+<div class="video-page" *ngIf="video">
+
+  
+
+  <div class="video-wrapper">
+    <video controls autoplay>
+      <source [src]="videoService.getVideoUrl(video.id)" type="video/mp4">
+      Your browser does not support video.
+    </video>
+  </div>
+
+  <h2 class="video-title-main">{{ video.title }}</h2>
+
+  <div class="video-meta">
+    <div *ngIf="video.ownerId" class="meta-row">
+      <strong>Posted by:</strong>
+      <a class="meta-link" [routerLink]="['/profile', video.ownerId]">
+        {{ video.ownerFullName || ('User #' + video.ownerId) }}
+      </a>
+    </div>
+    
+    <div *ngIf="video.description" class="meta-row">
+      <strong>Description:</strong> {{ video.description }}
+    </div>
+
+    <div *ngIf="video.tags?.length" class="meta-row">
+      <strong>Tags:</strong> {{ video.tags.join(', ') }}
+    </div>
+
+    <div *ngIf="video.createdAt" class="meta-row">
+      <strong>Created:</strong> {{ video.createdAt | date:'medium' }}
+    </div>
+    <div *ngIf="video.views !== undefined" class="meta-row">
+  <strong>Views:</strong> {{ video.views }}
+</div>
+
+    <div *ngIf="video.location" class="meta-row">
+      <strong>Location:</strong> {{ video.location }}
+    </div>
+  </div>
+
+  <div class="actions" *ngIf="video">
+    <button
+      (click)="toggleLike()"
+      [class.active]="video.likedByMe">
+      Like {{ video.likesCount }}
+    </button>
+  </div>
+
+  <hr>
+
+  <h3 class="comments-title">Comments</h3>
+
+  <div class="comment-form">
+    <textarea
+      [(ngModel)]="newComment"
+      placeholder="Write a comment..."
+      rows="3">
+    </textarea>
+
+    <button (click)="addComment()">
+      Add comment
+    </button>
+  </div>
+
+  <div class="comment-error" *ngIf="commentError">{{ commentError }}</div>
+  <div *ngIf="loadingComments">Loading comments...</div>
+
+  <div class="comments">
+    <div class="comment" *ngFor="let c of comments">
+      <a class="comment-author" [routerLink]="['/profile', c.authorId]">
+        {{ c.authorName || c.authorEmail }}
+      </a>
+      <div class="comment-text">{{ c.text }}</div>
+      <div class="comment-date">
+        {{ c.createdAt | date:'short' }}
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button class="page-btn" (click)="prevPage()" [disabled]="page === 0">
+      ‹
+    </button>
+
+    <span class="page-info">
+      {{ page + 1 }} / {{ totalPages }}
+    </span>
+
+    <button class="page-btn" (click)="nextPage()" [disabled]="page + 1 >= totalPages">
+      ›
+    </button>
+  </div>
+  
+</div>

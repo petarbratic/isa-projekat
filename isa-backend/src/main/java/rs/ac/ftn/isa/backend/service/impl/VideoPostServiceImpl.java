@@ -1,0 +1,195 @@
+package rs.ac.ftn.isa.backend.service.impl;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import rs.ac.ftn.isa.backend.dto.VideoPostRequest;
+import rs.ac.ftn.isa.backend.model.User;
+import rs.ac.ftn.isa.backend.model.VideoPost;
+import rs.ac.ftn.isa.backend.repository.UserRepository;
+import rs.ac.ftn.isa.backend.repository.VideoPostRepository;
+import rs.ac.ftn.isa.backend.service.VideoLikeService;
+import rs.ac.ftn.isa.backend.service.VideoPostService;
+import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
+
+@Service
+public class VideoPostServiceImpl implements VideoPostService {
+
+    @Autowired
+    private VideoPostRepository videoPostRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private VideoLikeService videoLikeService;
+
+    private final String VIDEO_DIR = "uploads/videos/";
+    private final String THUMB_DIR = "uploads/thumbnails/";
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void create(VideoPostRequest dto,
+                       MultipartFile video,
+                       MultipartFile thumbnail,
+                       String userEmail) throws IOException {
+
+        if (!video.getContentType().equals("video/mp4")) {
+            throw new IllegalArgumentException("Only MP4 videos are allowed");
+        }
+
+        if (video.getSize() > 200 * 1024 * 1024) { // 200MB limit
+            throw new IllegalArgumentException("Video file is too large");
+        }
+
+        User user = userRepository.findByEmail(userEmail);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        VideoPost post = new VideoPost();
+        post.setTitle(dto.getTitle());
+        post.setDescription(dto.getDescription());
+        post.setTags(dto.getTags());
+        post.setLocation(dto.getLocation());
+        post.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        post.setOwner(user);
+
+        videoPostRepository.save(post);
+
+        Path videoPath = Paths.get(VIDEO_DIR + post.getId() + ".mp4");
+        Path thumbPath = Paths.get(THUMB_DIR + post.getId() + ".png");
+
+        try {
+            Files.createDirectories(Paths.get(VIDEO_DIR));
+            Files.createDirectories(Paths.get(THUMB_DIR));
+
+            Files.copy(video.getInputStream(), videoPath, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(thumbnail.getInputStream(), thumbPath, StandardCopyOption.REPLACE_EXISTING);
+
+            post.setVideoPath(videoPath.toString());
+            post.setThumbnailPath(thumbPath.toString());
+
+            videoPostRepository.save(post);
+
+        } catch (Exception e) {
+            try {
+                if (Files.exists(videoPath)) Files.delete(videoPath);
+                if (Files.exists(thumbPath)) Files.delete(thumbPath);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            throw new IOException("Failed to save video or thumbnail", e);
+        }
+    }
+
+    @Override
+    public byte[] getVideo(Long videoId) throws IOException {
+        VideoPost post = videoPostRepository.findById(videoId)
+                .orElseThrow(() -> new IllegalArgumentException("Video not found"));
+
+        return Files.readAllBytes(Path.of(post.getVideoPath()));
+    }
+
+    @Override
+    public List<VideoPost> findAll() {
+        return videoPostRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    @Cacheable(value = "thumbnails", key = "#videoId")
+    public byte[] getThumbnail(Long videoId) throws IOException {
+        VideoPost post = videoPostRepository.findById(videoId)
+                .orElseThrow(() -> new IllegalArgumentException("Video not found"));
+        return Files.readAllBytes(Path.of(post.getThumbnailPath()));
+    }
+
+    public Optional<VideoPost> findById(Long id) {
+        return videoPostRepository.findById(id);
+    }
+
+    @Override
+    public List<VideoPost> findByOwnerId(Long ownerId) {
+        return videoPostRepository.findByOwner_IdOrderByCreatedAtDesc(ownerId);
+    }
+
+    private VideoPostResponse toResponse(VideoPost post) {
+        VideoPostResponse dto = new VideoPostResponse();
+        dto.setId(post.getId());
+        dto.setTitle(post.getTitle());
+        dto.setDescription(post.getDescription());
+        dto.setTags(post.getTags());
+        dto.setLocation(post.getLocation());
+        dto.setCreatedAt(post.getCreatedAt());
+
+        if (post.getOwner() != null) {
+            dto.setOwnerId(post.getOwner().getId());
+
+            String first = post.getOwner().getFirstName() != null ? post.getOwner().getFirstName() : "";
+            String last = post.getOwner().getLastName() != null ? post.getOwner().getLastName() : "";
+            String fullName = (first + " " + last).trim();
+
+            if (fullName.isBlank()) {
+                fullName = post.getOwner().getEmail();
+            }
+
+            dto.setOwnerFullName(fullName);
+        }
+        dto.setViews(post.getViews());
+        return dto;
+    }
+
+    public List<VideoPostResponse> findAllResponses() {
+        return videoPostRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public Optional<VideoPostResponse> findResponseById(Long id) {
+        return videoPostRepository.findById(id).map(this::toResponse);
+    }
+
+    @Override
+    @Transactional
+    public void incrementViews(Long videoId) {
+        videoPostRepository.incrementViews(videoId);
+    }
+
+    private VideoPostResponse toResponse(VideoPost post, String viewerEmail) {
+        VideoPostResponse dto = toResponse(post); // koristi postojeće mapiranje
+
+        long likesCount = videoLikeService.getLikesCount(post.getId());
+        dto.setLikesCount(likesCount);
+
+        boolean likedByMe = false;
+        if (viewerEmail != null) {
+            User viewer = userRepository.findByEmail(viewerEmail);
+            if (viewer != null) {
+                likedByMe = videoLikeService.isLikedByUser(post.getId(), viewer.getId());
+            }
+        }
+        dto.setLikedByMe(likedByMe);
+
+        return dto;
+    }
+
+    public Optional<VideoPostResponse> findResponseById(Long id, String viewerEmail) {
+        return videoPostRepository.findById(id).map(p -> toResponse(p, viewerEmail));
+    }
+
+
+
+}

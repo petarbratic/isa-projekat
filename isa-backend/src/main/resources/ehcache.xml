@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.ehcache.org/v3">
+
+    <cache alias="default-update-timestamps-region">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry><ttl unit="minutes">10</ttl></expiry>
+        <resources><heap unit="entries">2000</heap></resources>
+    </cache>
+
+    <cache alias="default-query-results-region">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry><ttl unit="seconds">30</ttl></expiry>
+        <resources><heap unit="entries">2000</heap></resources>
+    </cache>
+
+    <cache alias="rs.ac.ftn.isa.backend.model.VideoComment">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry><ttl unit="minutes">5</ttl></expiry>
+        <resources><heap unit="entries">10000</heap></resources>
+    </cache>
+
+    <cache alias="videoCommentsByVideo">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry><ttl unit="seconds">30</ttl></expiry>
+        <resources><heap unit="entries">2000</heap></resources>
+    </cache>
+
+    <cache alias="thumbnails">
+        <key-type>java.lang.Long</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry><ttl unit="minutes">30</ttl></expiry>
+        <resources><heap unit="entries">200</heap></resources>
+    </cache>
+
+</config>
