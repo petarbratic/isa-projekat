@@ -1,6 +1,6 @@
 // kod (za sad) preuzet iz vezbi 2 async example
 
-package rs.ac.ftn.isa.backend.model;
+package rs.ac.ftn.isa.backend.domain.model;
 
 import java.sql.Timestamp;
 import java.util.Collection;

@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.ftn.isa.backend.dto.UserRequest;
-import rs.ac.ftn.isa.backend.model.User;
+import rs.ac.ftn.isa.backend.domain.model.User;
 import rs.ac.ftn.isa.backend.repository.UserRepository;
 import rs.ac.ftn.isa.backend.service.UserService;
 

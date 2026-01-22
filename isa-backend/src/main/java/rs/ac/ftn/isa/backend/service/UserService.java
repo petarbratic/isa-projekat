@@ -2,7 +2,7 @@ package rs.ac.ftn.isa.backend.service;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import rs.ac.ftn.isa.backend.dto.UserRequest;
-import rs.ac.ftn.isa.backend.model.User;
+import rs.ac.ftn.isa.backend.domain.model.User;
 
 import java.util.List;
 

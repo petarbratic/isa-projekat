@@ -1,9 +1,9 @@
-package rs.ac.ftn.isa.backend.model;
+package rs.ac.ftn.isa.backend.domain.model;
 
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 
-import rs.ac.ftn.isa.backend.model.enums.WatchPartyRole;
+import rs.ac.ftn.isa.backend.domain.enums.WatchPartyRole;
 
 @Entity
 @Table(

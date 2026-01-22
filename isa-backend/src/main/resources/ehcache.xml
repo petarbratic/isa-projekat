@@ -15,7 +15,7 @@
         <resources><heap unit="entries">2000</heap></resources>
     </cache>
 
-    <cache alias="rs.ac.ftn.isa.backend.model.VideoComment">
+    <cache alias="rs.ac.ftn.isa.backend.domain.model.VideoComment">
         <key-type>java.lang.Object</key-type>
         <value-type>java.lang.Object</value-type>
         <expiry><ttl unit="minutes">5</ttl></expiry>

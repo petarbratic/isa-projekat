@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.web.multipart.MultipartFile;
 import rs.ac.ftn.isa.backend.dto.VideoPostRequest;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
-import rs.ac.ftn.isa.backend.model.VideoPost;
+import rs.ac.ftn.isa.backend.domain.model.VideoPost;
 
 public interface VideoPostService {
 
