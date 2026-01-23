@@ -9,6 +9,7 @@ import java.util.Set;
 
 // G Counter - Grow Only Counter
 // CRDT - Conflict Free Replicated Data Types (to the Rescue)
+// Final klasa - ne moze se nasledjivati
 public final class GCounter implements Serializable {
 
     // Ovde se cuva broj pregleda svake replike
