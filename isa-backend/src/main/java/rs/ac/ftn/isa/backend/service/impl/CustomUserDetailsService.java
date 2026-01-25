@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import rs.ac.ftn.isa.backend.model.User;
+import rs.ac.ftn.isa.backend.domain.model.User;
 import rs.ac.ftn.isa.backend.repository.UserRepository;
 
 

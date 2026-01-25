@@ -1,11 +1,10 @@
 package rs.ac.ftn.isa.backend;
 
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-import rs.ac.ftn.isa.backend.model.VideoPost;
+import rs.ac.ftn.isa.backend.domain.model.VideoPost;
 import rs.ac.ftn.isa.backend.repository.VideoPostRepository;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
 

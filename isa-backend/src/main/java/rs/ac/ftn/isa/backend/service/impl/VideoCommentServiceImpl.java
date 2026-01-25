@@ -7,10 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import rs.ac.ftn.isa.backend.dto.CommentResponse;
-import rs.ac.ftn.isa.backend.exception.TooManyCommentsException;
-import rs.ac.ftn.isa.backend.model.User;
-import rs.ac.ftn.isa.backend.model.VideoComment;
-import rs.ac.ftn.isa.backend.model.VideoPost;
+import rs.ac.ftn.isa.backend.domain.model.User;
+import rs.ac.ftn.isa.backend.domain.model.VideoComment;
+import rs.ac.ftn.isa.backend.domain.model.VideoPost;
 import rs.ac.ftn.isa.backend.repository.UserRepository;
 import rs.ac.ftn.isa.backend.repository.VideoCommentRepository;
 import rs.ac.ftn.isa.backend.repository.VideoPostRepository;

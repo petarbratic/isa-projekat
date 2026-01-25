@@ -18,7 +18,7 @@ import rs.ac.ftn.isa.backend.dto.JwtAuthenticationRequest;
 import rs.ac.ftn.isa.backend.dto.UserRequest;
 import rs.ac.ftn.isa.backend.dto.UserTokenState;
 import rs.ac.ftn.isa.backend.exception.ResourceConflictException;
-import rs.ac.ftn.isa.backend.model.User;
+import rs.ac.ftn.isa.backend.domain.model.User;
 import rs.ac.ftn.isa.backend.security.LoginRateLimiter;
 import rs.ac.ftn.isa.backend.service.EmailService;
 import rs.ac.ftn.isa.backend.service.UserService;

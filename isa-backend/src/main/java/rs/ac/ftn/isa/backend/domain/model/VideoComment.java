@@ -1,4 +1,4 @@
-package rs.ac.ftn.isa.backend.model;
+package rs.ac.ftn.isa.backend.domain.model;
 
 import jakarta.persistence.*;
 import java.sql.Timestamp;

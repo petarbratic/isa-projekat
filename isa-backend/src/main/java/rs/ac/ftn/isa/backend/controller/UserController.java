@@ -7,18 +7,17 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import rs.ac.ftn.isa.backend.model.User;
+import rs.ac.ftn.isa.backend.domain.model.User;
 import rs.ac.ftn.isa.backend.service.UserService;
 import rs.ac.ftn.isa.backend.dto.PublicUserDto;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
-import rs.ac.ftn.isa.backend.model.VideoPost;
+import rs.ac.ftn.isa.backend.domain.model.VideoPost;
 
 
 // Primer kontrolera cijim metodama mogu pristupiti samo autorizovani korisnici

@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import rs.ac.ftn.isa.backend.dto.VideoPostRequest;
-import rs.ac.ftn.isa.backend.model.User;
-import rs.ac.ftn.isa.backend.model.VideoPost;
+import rs.ac.ftn.isa.backend.domain.model.User;
+import rs.ac.ftn.isa.backend.domain.model.VideoPost;
 import rs.ac.ftn.isa.backend.repository.UserRepository;
 import rs.ac.ftn.isa.backend.repository.VideoPostRepository;
 import rs.ac.ftn.isa.backend.service.VideoLikeService;

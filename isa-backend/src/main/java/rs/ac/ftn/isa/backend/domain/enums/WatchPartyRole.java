@@ -1,4 +1,4 @@
-package rs.ac.ftn.isa.backend.model.enums;
+package rs.ac.ftn.isa.backend.domain.enums;
 
 public enum WatchPartyRole {
     HOST,

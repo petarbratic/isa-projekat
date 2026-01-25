@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import jakarta.persistence.QueryHint;
 import org.springframework.data.jpa.repository.QueryHints;
 
-import rs.ac.ftn.isa.backend.model.VideoComment;
+import rs.ac.ftn.isa.backend.domain.model.VideoComment;
 
 import java.sql.Timestamp;
 

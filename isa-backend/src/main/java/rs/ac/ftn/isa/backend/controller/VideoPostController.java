@@ -1,13 +1,8 @@
 package rs.ac.ftn.isa.backend.controller;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import rs.ac.ftn.isa.backend.dto.VideoPostRequest;
-import rs.ac.ftn.isa.backend.model.VideoPost;
 import rs.ac.ftn.isa.backend.service.VideoLikeService;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
