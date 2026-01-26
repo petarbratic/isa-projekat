@@ -2,7 +2,9 @@ package rs.ac.ftn.isa.backend.controller;
 
 import org.springframework.web.bind.annotation.*;
 import rs.ac.ftn.isa.backend.service.ViewCounterService;
+import org.springframework.context.annotation.Profile;
 
+@Profile({"replica1", "replica2"})
 @RestController
 @RequestMapping("/counter")
 public class ViewCounterController {
@@ -13,13 +15,13 @@ public class ViewCounterController {
         this.service = service;
     }
 
-    @PostMapping("/inc")
-    public long inc() {
-        return service.incrementLocal();
+    @PostMapping("/{videoId}/inc")
+    public long inc(@PathVariable long videoId) {
+        return service.incrementLocal(videoId);
     }
 
-    @GetMapping
-    public long get() {
-        return service.getLocal();
+    @GetMapping("/{videoId}")
+    public long get(@PathVariable long videoId) {
+        return service.getTotal(videoId);
     }
 }
