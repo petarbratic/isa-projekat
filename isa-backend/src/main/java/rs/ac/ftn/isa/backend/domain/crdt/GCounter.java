@@ -7,20 +7,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-// G Counter - Grow Only Counter
-// CRDT - Conflict Free Replicated Data Types (to the Rescue)
-// Final klasa - ne moze se nasledjivati
 public final class GCounter implements Serializable {
 
-    // Ovde se cuva broj pregleda svake replike
     private final Map<String, Long> counts;
 
-    // Konstruktor
     public GCounter() {
         this.counts = new HashMap<>();
     }
 
-    
     public GCounter(Map<String, Long> initialCounts) {
         this.counts = new HashMap<>();
         if (initialCounts != null) {
@@ -37,12 +31,10 @@ public final class GCounter implements Serializable {
         }
     }
 
-    // Inkrement za 1
     public void increment(String replicaId) {
         incrementBy(replicaId, 1L);
     }
 
-    // Inkrement za prosledjenu vrednost
     public void incrementBy(String replicaId, long delta) {
         validateReplicaId(replicaId);
         if (delta <= 0) throw new IllegalArgumentException("delta must be > 0");
@@ -50,13 +42,11 @@ public final class GCounter implements Serializable {
         counts.put(replicaId, current + delta);
     }
 
-    // Merge metoda
     public void merge(GCounter other) {
         if (other == null) return;
         mergeState(other.counts);
     }
 
-    // MergeState
     public void mergeState(Map<String, Long> otherCounts) {
 
         if (otherCounts == null || otherCounts.isEmpty()) return;
@@ -76,9 +66,6 @@ public final class GCounter implements Serializable {
     /**
      * Returns the total value (sum of all replica slots).
      */
-    // U bazi se nikada nece cuvati zbir broja pregleda,
-    // nego ce se uvek sabirati brojevi pregleda iz obe
-    // (vise) replika
     public long value() {
         long sum = 0L;
         for (long v : counts.values()) sum += v;
@@ -88,7 +75,6 @@ public final class GCounter implements Serializable {
     /**
      * Exposes an immutable snapshot of the internal state.
      */
-    // U sustini getter. Vracena mapa je neizmenjiva
     public Map<String, Long> snapshot() {
         return Collections.unmodifiableMap(new HashMap<>(counts));
     }
@@ -105,9 +91,6 @@ public final class GCounter implements Serializable {
         return v;
     }
 
-    // Preklapanje operatora
-    // Dve istance klase GCounter su jednake ako su jednake
-    // counts mape
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
