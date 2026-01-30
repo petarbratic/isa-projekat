@@ -24,4 +24,8 @@ public class ViewCounterSyncController {
         service.mergeIncoming(states);
         return ResponseEntity.ok().build();
     }
+    @GetMapping("/gcounter/state")
+    public ResponseEntity<List<GCounterState>> state() {
+        return ResponseEntity.ok(service.exportStates());
+    }
 }

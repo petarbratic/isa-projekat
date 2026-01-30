@@ -10,6 +10,6 @@ public interface ViewCounterService {
 
     List<GCounterState> getDirtyStates();
     void markClean(List<Long> videoIds);
-
+    List<GCounterState> exportStates();
     void mergeIncoming(List<GCounterState> incoming);
 }

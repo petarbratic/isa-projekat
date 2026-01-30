@@ -74,7 +74,16 @@ public class ViewCounterServiceImpl implements ViewCounterService {
             row.setUpdatedAtUtc(Instant.now());
         }
     }
-
+    @Override
+    @Transactional(readOnly = true)
+    public List<GCounterState> exportStates() {
+        List<ViewCounter> all = repo.findAll();
+        List<GCounterState> out = new ArrayList<>(all.size());
+        for (ViewCounter v : all) {
+            out.add(new GCounterState(v.getId(), v.getCounts()));
+        }
+        return out;
+    }
     @Override
     @Transactional
     public void mergeIncoming(List<GCounterState> incoming) {
