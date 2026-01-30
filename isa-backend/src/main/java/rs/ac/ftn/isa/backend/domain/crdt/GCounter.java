@@ -20,7 +20,7 @@ public final class GCounter implements Serializable {
         this.counts = new HashMap<>();
     }
 
-    // Copy construtor u sustini
+    
     public GCounter(Map<String, Long> initialCounts) {
         this.counts = new HashMap<>();
         if (initialCounts != null) {
