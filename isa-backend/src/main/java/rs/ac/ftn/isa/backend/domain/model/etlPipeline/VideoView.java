@@ -1,4 +1,4 @@
-package rs.ac.ftn.isa.backend.domain.model;
+package rs.ac.ftn.isa.backend.domain.model.etlPipeline;
 
 
 import jakarta.persistence.*;
@@ -20,7 +20,7 @@ public class VideoView {
     @Column(name = "viewed_at")
     private Timestamp timestamp;
 
-    public VideoView(Timestamp timestamp, Long videoId) {
+    public VideoView(Long videoId, Timestamp timestamp) {
         this.timestamp = timestamp;
         this.videoId = videoId;
     }

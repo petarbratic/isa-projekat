@@ -1,4 +1,4 @@
-package rs.ac.ftn.isa.backend.repository.projection;
+package rs.ac.ftn.isa.backend.repository.etlPipeline.projection;
 
 public interface DailyVideoViewsRow {
     Long getVideoId();

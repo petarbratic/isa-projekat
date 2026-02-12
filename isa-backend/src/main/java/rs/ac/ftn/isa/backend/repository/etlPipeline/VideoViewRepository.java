@@ -1,12 +1,12 @@
-package rs.ac.ftn.isa.backend.repository;
+package rs.ac.ftn.isa.backend.repository.etlPipeline;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import rs.ac.ftn.isa.backend.domain.model.VideoView;
-import rs.ac.ftn.isa.backend.repository.projection.DailyVideoViewsRow;
+import rs.ac.ftn.isa.backend.domain.model.etlPipeline.VideoView;
+import rs.ac.ftn.isa.backend.repository.etlPipeline.projection.DailyVideoViewsRow;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface VideoViewRepository extends JpaRepository<VideoView, Long> {

@@ -38,3 +38,24 @@ INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) V
 INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) VALUES (2, 4, 'Nostalgija na maksimumu!', '2026-01-11 11:23:41.006', 0);
 INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) VALUES (3, 5, 'Pesma je odlično odsvirana, bravo!', '2026-01-11 11:25:09.880', 0);
 INSERT INTO video_comments (user_id, video_post_id, text, created_at, version) VALUES (1, 5, 'Ovo mi je baš prijalo da poslušam.', '2026-01-11 11:26:34.215', 0);
+
+INSERT INTO video_views (video_id, viewed_at) VALUES (5, NOW() - INTERVAL '1 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (5, NOW() - INTERVAL '1 day' + INTERVAL '10 minutes');
+INSERT INTO video_views (video_id, viewed_at) VALUES (5, NOW() - INTERVAL '1 day' + INTERVAL '20 minutes');
+INSERT INTO video_views (video_id, viewed_at) VALUES (5, NOW() - INTERVAL '2 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (5, NOW() - INTERVAL '2 day' + INTERVAL '15 minutes');
+INSERT INTO video_views (video_id, viewed_at) VALUES (5, NOW() - INTERVAL '3 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (5, NOW() - INTERVAL '3 day' + INTERVAL '25 minutes');
+INSERT INTO video_views (video_id, viewed_at) VALUES (5, NOW() - INTERVAL '4 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (4, NOW() - INTERVAL '1 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (4, NOW() - INTERVAL '2 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (4, NOW() - INTERVAL '2 day' + INTERVAL '30 minutes');
+INSERT INTO video_views (video_id, viewed_at) VALUES (4, NOW() - INTERVAL '3 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (4, NOW() - INTERVAL '4 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (3, NOW() - INTERVAL '1 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (3, NOW() - INTERVAL '3 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (3, NOW() - INTERVAL '5 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (1, NOW() - INTERVAL '2 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (2, NOW() - INTERVAL '6 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (1, NOW() - INTERVAL '7 day');
+INSERT INTO video_views (video_id, viewed_at) VALUES (2, NOW() - INTERVAL '7 day' + INTERVAL '15 minutes');
