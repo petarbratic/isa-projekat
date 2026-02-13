@@ -3,47 +3,71 @@ package rs.ac.ftn.isa.backend.domain.model;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 
-import rs.ac.ftn.isa.backend.domain.enums.TranscodingStatus;
-
 @Entity
 @Table(name = "TRANSCODING_JOBS", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "message_id")
+        @UniqueConstraint(columnNames = {"job_id"})
 })
 public class TranscodingJob {
+
+    public enum Status { PENDING, PROCESSING, DONE, FAILED }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "video_post_id", nullable = false)
-    private VideoPost videoPost;
+    @Column(name="job_id", nullable=false, unique=true)
+    private String jobId;
 
-    @Column(name = "message_id", nullable = false)
-    private String messageId;
+    @Column(name="video_id", nullable=false)
+    private Long videoId;
 
-    @Column(name = "input_path", nullable = false)
-    private String inputPath;
+    @Column(name="preset", nullable=false)
+    private String preset;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private TranscodingStatus status;
+    @Column(name="status", nullable=false)
+    private Status status;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name="output_path")
+    private String outputPath;
+
+    @Column(name="error_message", length = 2000)
+    private String errorMessage;
+
+    @Column(name="created_at", nullable=false)
     private Timestamp createdAt;
 
-    @Column(name = "started_at")
-    private Timestamp startedAt;
-
-    @Column(name = "finished_at")
-    private Timestamp finishedAt;
-
-    @Column(name = "attempt_count", nullable = false)
-    private int attemptCount = 0;
+    @Column(name="updated_at", nullable=false)
+    private Timestamp updatedAt;
 
     @PrePersist
-    public void onCreate() {
+    void onCreate() {
         createdAt = new Timestamp(System.currentTimeMillis());
-        if (status == null) status = TranscodingStatus.PENDING;
+        updatedAt = createdAt;
     }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    public Long getId() { return id; }
+
+    public String getJobId() { return jobId; }
+    public void setJobId(String jobId) { this.jobId = jobId; }
+
+    public Long getVideoId() { return videoId; }
+    public void setVideoId(Long videoId) { this.videoId = videoId; }
+
+    public String getPreset() { return preset; }
+    public void setPreset(String preset) { this.preset = preset; }
+
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
+
+    public String getOutputPath() { return outputPath; }
+    public void setOutputPath(String outputPath) { this.outputPath = outputPath; }
+
+    public String getErrorMessage() { return errorMessage; }
+    public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
 }

@@ -28,7 +28,7 @@ public class LoadTestCounter {
         int pauseMs = 50;         // mala pauza da scheduler stigne da "upadne"
         int waitForSyncMs = 6500;
 
-        Mode mode = Mode.ROUND_ROBIN;
+        Mode mode = Mode.RANDOM_UNIFORM;
 
         if (REPLICAS.isEmpty()) {
             System.out.println("No replicas configured.");

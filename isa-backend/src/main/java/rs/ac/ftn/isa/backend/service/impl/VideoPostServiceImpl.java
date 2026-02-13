@@ -22,6 +22,7 @@ import rs.ac.ftn.isa.backend.repository.VideoPostRepository;
 import rs.ac.ftn.isa.backend.service.VideoLikeService;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
+import rs.ac.ftn.isa.backend.service.transcoding.TranscodingProducer;
 
 @Service
 public class VideoPostServiceImpl implements VideoPostService {
@@ -37,6 +38,10 @@ public class VideoPostServiceImpl implements VideoPostService {
 
     private final String VIDEO_DIR = "uploads/videos/";
     private final String THUMB_DIR = "uploads/thumbnails/";
+
+    @Autowired
+    private TranscodingProducer transcodingProducer;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -82,6 +87,14 @@ public class VideoPostServiceImpl implements VideoPostService {
             post.setThumbnailPath(thumbPath.toString());
 
             videoPostRepository.save(post);
+
+            transcodingProducer.publish(
+                    new rs.ac.ftn.isa.backend.dto.TranscodeJobMessage(
+                            post.getId(),
+                            post.getVideoPath(),
+                            "MP4_720P"
+                    )
+            );
 
         } catch (Exception e) {
             try {
