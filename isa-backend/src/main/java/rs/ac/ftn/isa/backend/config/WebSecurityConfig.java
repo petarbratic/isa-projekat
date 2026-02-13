@@ -97,7 +97,7 @@ public class WebSecurityConfig {
                 // koji tip korisnika moze da pristupi odgovarajucoj ruti. Npr. ukoliko zelimo da definisemo da ruti 'admin' moze da pristupi
                 // samo korisnik koji ima rolu 'ADMIN', navodimo na sledeci nacin:
                 // .requestMatchers("/admin").hasRole("ADMIN") ili .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
-
+                .requestMatchers("/api/admin/simulate-connection-loss", "/api/admin/simulate-connection-restore").permitAll()
                 // Ovim smo dozvolili pristup statickim resursima aplikacije
                 .requestMatchers(
                         "/favicon.ico",

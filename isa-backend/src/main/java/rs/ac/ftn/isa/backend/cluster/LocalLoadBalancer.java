@@ -12,52 +12,100 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
- * Jednostavan load balancer na portu 8080 – round-robin na replike 8084 i 8085.
- * Pokreće se iz IntelliJ kao posebna Run konfiguracija (Application → Main class: ova klasa).
- * Ne koristi Spring – samo Java.
+ * Load balancer na portu 8080 – round-robin na replike 8084 i 8085.
+ * Šalje samo na replike sa health=UP (parcijalni gubitak konekcije → isključuje neispravnu repliku).
  */
 public class LocalLoadBalancer {
 
     private static final String[] BACKENDS = { "http://localhost:8084", "http://localhost:8085" };
     private static final int PORT = 8080;
     private static final AtomicInteger next = new AtomicInteger(0);
+    private static final AtomicReferenceArray<Boolean> healthy = new AtomicReferenceArray<>(new Boolean[] { true, true });
+    private static final HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(3))
+            .build();
 
     public static void main(String[] args) throws IOException {
+        startHealthCheckThread();
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/", LocalLoadBalancer::handle);
         server.setExecutor(null);
         server.start();
         System.out.println("Load balancer pokrenut na http://localhost:" + PORT);
-        System.out.println("Provera: http://localhost:" + PORT + "/ping");
-        System.out.println("Demo:    http://localhost:" + PORT + "/api/cluster/demo");
-        System.out.println("Backend replike: " + String.join(", ", BACKENDS));
+        System.out.println("Health check: šalje samo na replike sa /actuator/health=UP");
+        System.out.println("Demo: http://localhost:" + PORT + "/api/cluster/demo");
+    }
+
+    private static void startHealthCheckThread() {
+        // Odmah prvi check
+        for (int i = 0; i < BACKENDS.length; i++) {
+            healthy.set(i, checkHealth(BACKENDS[i]));
+        }
+        Thread t = new Thread(() -> {
+            while (true) {
+                try { Thread.sleep(5000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
+                for (int i = 0; i < BACKENDS.length; i++) {
+                    healthy.set(i, checkHealth(BACKENDS[i]));
+                }
+            }
+        }, "health-check");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private static boolean checkHealth(String baseUrl) {
+        try {
+            HttpResponse<String> r = httpClient.send(
+                    HttpRequest.newBuilder().uri(URI.create(baseUrl + "/actuator/health")).timeout(Duration.ofSeconds(3)).GET().build(),
+                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            String body = r.body();
+            return r.statusCode() == 200 && body != null && body.contains("\"status\":\"UP\"");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static String selectHealthyBackend() {
+        for (int attempt = 0; attempt < BACKENDS.length; attempt++) {
+            int idx = next.getAndIncrement() % BACKENDS.length;
+            if (Boolean.TRUE.equals(healthy.get(idx))) return BACKENDS[idx];
+        }
+        return null;
     }
 
     private static void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getRawPath();
 
-        // Sam load balancer – bez poziva na replike (provera da radi)
         if ("/".equals(path) || "/ping".equals(path)) {
-            String msg = "Load balancer radi. Za API pozive koristi npr. http://localhost:" + PORT + "/api/cluster/demo";
-            byte[] body = msg.getBytes();
+            StringBuilder sb = new StringBuilder("Load balancer radi. Health check uključen – šalje samo na UP replike.\n");
+            for (int i = 0; i < BACKENDS.length; i++) {
+                sb.append("  ").append(BACKENDS[i]).append(": ").append(Boolean.TRUE.equals(healthy.get(i)) ? "UP" : "DOWN").append("\n");
+            }
+            byte[] body = sb.toString().getBytes(StandardCharsets.UTF_8);
             exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
             exchange.sendResponseHeaders(200, body.length);
             try (OutputStream out = exchange.getResponseBody()) { out.write(body); }
             return;
         }
 
-        String backend = BACKENDS[next.getAndIncrement() % BACKENDS.length];
+        String backend = selectHealthyBackend();
+        if (backend == null) {
+            String err = "Nijedna replika nije UP (parcijalni gubitak konekcije – obe nema bazu?)";
+            byte[] b = err.getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
+            exchange.sendResponseHeaders(503, b.length);
+            try (OutputStream out = exchange.getResponseBody()) { out.write(b); }
+            return;
+        }
         String query = exchange.getRequestURI().getRawQuery();
         String targetPath = path + (query != null && !query.isEmpty() ? "?" + query : "");
-
         try {
-            HttpClient client = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(5))
-                    .build();
             HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
                     .uri(URI.create(backend + targetPath))
                     .timeout(Duration.ofSeconds(10))
@@ -69,7 +117,7 @@ public class LocalLoadBalancer {
                 }
             });
 
-            HttpResponse<byte[]> response = client.send(reqBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
+            HttpResponse<byte[]> response = httpClient.send(reqBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
             response.headers().map().forEach((name, values) -> {
                 if (!skipResponseHeader(name))
                     values.forEach(v -> exchange.getResponseHeaders().add(name, v));
