@@ -97,4 +97,27 @@ public class PopularVideosEtlServiceImpl implements PopularVideosEtlService {
             popularVideoItemRepository.saveAll(items);
         }
     }
+
+    @Transactional(readOnly = true)
+    public List<Long> getLatestTop3VideoIds() {
+
+        Optional<PopularVideosRun> latestRunOpt =
+                popularVideosRunRepository.findTopByOrderByExecutedAtDesc();
+
+        if (latestRunOpt.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        PopularVideosRun latestRun = latestRunOpt.get();
+
+        List<PopularVideoItem> items =
+                popularVideoItemRepository.findByRunOrderByRankAsc(latestRun);
+
+        List<Long> videoIds = new ArrayList<>();
+        for (PopularVideoItem item : items) {
+            videoIds.add(item.getVideoId());
+        }
+
+        return videoIds;
+    }
 }

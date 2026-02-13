@@ -31,4 +31,8 @@ public class PopularVideoItem {
         this.rank = rank;
         this.run = run;
     }
+
+    public Long getVideoId() { return videoId; }
+    public Long getScore() { return score; }
+    public Integer getRank() { return rank; }
 }

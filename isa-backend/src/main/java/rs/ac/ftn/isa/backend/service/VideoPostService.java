@@ -28,4 +28,5 @@ public interface VideoPostService {
     List<VideoPostResponse> findAllResponses();
     Optional<VideoPostResponse> findResponseById(Long id, String viewerEmail);
     void incrementViews(Long videoId);
+    List<VideoPostResponse> findResponsesByIds(List<Long> ids);
 }

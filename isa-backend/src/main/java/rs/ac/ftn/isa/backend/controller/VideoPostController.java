@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import rs.ac.ftn.isa.backend.domain.model.etlPipeline.VideoView;
 import rs.ac.ftn.isa.backend.dto.VideoPostRequest;
 import rs.ac.ftn.isa.backend.repository.etlPipeline.VideoViewRepository;
+import rs.ac.ftn.isa.backend.service.PopularVideosEtlService;
 import rs.ac.ftn.isa.backend.service.VideoLikeService;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
@@ -33,6 +34,9 @@ public class VideoPostController {
 
     @Autowired
     private VideoViewRepository videoViewRepository;
+
+    @Autowired
+    private PopularVideosEtlService popularVideosEtlService;
 
     @PostMapping(
             value = "/videos",
@@ -79,6 +83,15 @@ public class VideoPostController {
     //@PreAuthorize("isAuthenticated()")
     public List<VideoPostResponse> getAllVideos() {
         return videoPostService.findAllResponses();
+    }
+
+    @GetMapping("/videos/trending")
+    public ResponseEntity<List<VideoPostResponse>> getTrendingVideos() {
+        return ResponseEntity.ok(
+                videoPostService.findResponsesByIds(
+                        popularVideosEtlService.getLatestTop3VideoIds()
+                )
+        );
     }
 
     @GetMapping(value = "/videos/{id}/thumbnail", produces = MediaType.IMAGE_PNG_VALUE)
