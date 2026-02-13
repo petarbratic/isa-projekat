@@ -1,0 +1,72 @@
+# Klaster: 2 replike API-ja, ista baza, Nginx load balancer ispred
+# Pokretanje: docker compose -f docker-compose.cluster.yml up -d
+# Demo API:  curl http://localhost:8080/api/cluster/demo  (više puta da vidiš round-robin)
+# Health:    curl http://localhost:8080/actuator/health
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: isa
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend-replica1:
+    build: .
+    environment:
+      SPRING_PROFILES_ACTIVE: cluster
+      SERVER_PORT: 8081
+      APP_REPLICA_ID: replica1
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/isa
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
+  backend-replica2:
+    build: .
+    environment:
+      SPRING_PROFILES_ACTIVE: cluster
+      SERVER_PORT: 8081
+      APP_REPLICA_ID: replica2
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/isa
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.cluster.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend-replica1
+      - backend-replica2
+
+volumes:
+  pgdata:
