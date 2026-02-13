@@ -6,8 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,6 +22,7 @@ import rs.ac.ftn.isa.backend.repository.VideoPostRepository;
 import rs.ac.ftn.isa.backend.service.VideoLikeService;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
+import rs.ac.ftn.isa.backend.service.transcoding.TranscodingProducer;
 
 @Service
 public class VideoPostServiceImpl implements VideoPostService {
@@ -38,6 +38,10 @@ public class VideoPostServiceImpl implements VideoPostService {
 
     private final String VIDEO_DIR = "uploads/videos/";
     private final String THUMB_DIR = "uploads/thumbnails/";
+
+    @Autowired
+    private TranscodingProducer transcodingProducer;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -83,6 +87,14 @@ public class VideoPostServiceImpl implements VideoPostService {
             post.setThumbnailPath(thumbPath.toString());
 
             videoPostRepository.save(post);
+
+            transcodingProducer.publish(
+                    new rs.ac.ftn.isa.backend.dto.TranscodeJobMessage(
+                            post.getId(),
+                            post.getVideoPath(),
+                            "MP4_720P"
+                    )
+            );
 
         } catch (Exception e) {
             try {
@@ -154,6 +166,26 @@ public class VideoPostServiceImpl implements VideoPostService {
     public List<VideoPostResponse> findAllResponses() {
         return videoPostRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<VideoPostResponse> findResponsesByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+
+        // 1) Fetch iz baze
+        List<VideoPost> posts = videoPostRepository.findByIdIn(ids);
+
+        // 2) Zadrži redosled kao u ulaznoj listi ids
+        Map<Long, Integer> order = new HashMap<>();
+        for (int i = 0; i < ids.size(); i++) {
+            order.put(ids.get(i), i);
+        }
+
+        return posts.stream()
+                .sorted(Comparator.comparingInt(p -> order.getOrDefault(p.getId(), Integer.MAX_VALUE)))
                 .map(this::toResponse)
                 .toList();
     }

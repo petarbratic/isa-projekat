@@ -13,4 +13,5 @@ public interface VideoPostRepository extends JpaRepository<VideoPost, Long> {
     @Transactional
     @Query("UPDATE VideoPost v SET v.views = v.views + 1 WHERE v.id = :videoId")
     void incrementViews(Long videoId);
+    List<VideoPost> findByIdIn(List<Long> ids);
 }

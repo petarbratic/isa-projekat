@@ -42,6 +42,10 @@ export class VideoService {
     return this.http.get<VideoPost>(`${this.apiUrl}/videos/${videoId}`);
   }
 
+  getTrending(): Observable<VideoPost[]> {
+    return this.http.get<VideoPost[]>(`${this.apiUrl}/videos/trending`);
+  }
+
   getComments(videoId: number, page = 0, size = 10): Observable<PageResponse<CommentResponse>> {
     return this.http.get<PageResponse<CommentResponse>>(
       `${this.apiUrl}/videos/${videoId}/comments?page=${page}&size=${size}`
