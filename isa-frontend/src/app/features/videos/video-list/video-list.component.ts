@@ -10,12 +10,18 @@ import { VideoPost } from '../video.model';
 export class VideoListComponent implements OnInit {
 
   videos: VideoPost[] = [];
+  trendingVideos: VideoPost[] = [];
   playingVideoId: number | null = null;
 
   constructor(public videoService: VideoService) {}
 
   ngOnInit(): void {
     this.videoService.getAll().subscribe(v => this.videos = v);
+
+    this.videoService.getTrending().subscribe({
+      next: (data) => this.trendingVideos = data,
+      error: () => this.trendingVideos = []
+    });
   }
 
   playVideo(videoId: number) {
