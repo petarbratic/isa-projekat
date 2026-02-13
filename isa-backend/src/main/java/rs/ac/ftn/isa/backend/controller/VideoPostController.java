@@ -2,6 +2,7 @@ package rs.ac.ftn.isa.backend.controller;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import rs.ac.ftn.isa.backend.domain.model.etlPipeline.VideoView;
 import rs.ac.ftn.isa.backend.dto.VideoPostRequest;
+import rs.ac.ftn.isa.backend.repository.etlPipeline.VideoViewRepository;
+import rs.ac.ftn.isa.backend.service.PopularVideosEtlService;
 import rs.ac.ftn.isa.backend.service.VideoLikeService;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
@@ -27,6 +31,12 @@ public class VideoPostController {
 
     @Autowired
     private VideoLikeService videoLikeService;
+
+    @Autowired
+    private VideoViewRepository videoViewRepository;
+
+    @Autowired
+    private PopularVideosEtlService popularVideosEtlService;
 
     @PostMapping(
             value = "/videos",
@@ -75,6 +85,15 @@ public class VideoPostController {
         return videoPostService.findAllResponses();
     }
 
+    @GetMapping("/videos/trending")
+    public ResponseEntity<List<VideoPostResponse>> getTrendingVideos() {
+        return ResponseEntity.ok(
+                videoPostService.findResponsesByIds(
+                        popularVideosEtlService.getLatestTop3VideoIds()
+                )
+        );
+    }
+
     @GetMapping(value = "/videos/{id}/thumbnail", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> getThumbnail(@PathVariable("id") Long videoId) {
         try {
@@ -88,6 +107,7 @@ public class VideoPostController {
     @GetMapping("/videos/{id}")
     public ResponseEntity<VideoPostResponse> getVideoById(@PathVariable Long id, Principal principal) {
         videoPostService.incrementViews(id);
+        videoViewRepository.save(new VideoView(id, new Timestamp(System.currentTimeMillis())));
 
         String viewerEmail = (principal != null) ? principal.getName() : null;
 
