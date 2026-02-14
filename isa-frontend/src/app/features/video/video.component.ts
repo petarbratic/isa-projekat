@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { VideoService } from 'src/app/core/services/video.service';
 import { VideoPost } from '../videos/video.model';
 import { PageResponse, CommentResponse } from 'src/app/models/comment.model';
 import { AuthService } from 'src/app/core/services/auth.service';
+import Hls from 'hls.js';
 
 @Component({
   selector: 'app-video',
@@ -11,6 +12,27 @@ import { AuthService } from 'src/app/core/services/auth.service';
   styleUrls: ['./video.component.scss']
 })
 export class VideoComponent implements OnInit {
+
+  playerMode: 'LOADING' | 'BLOCKED' | 'HLS' | 'MP4' | 'ERROR' = 'LOADING';
+
+  private _playerRef?: ElementRef<HTMLVideoElement>;
+  private pendingAttach: (() => void) | null = null;
+
+  @ViewChild('player', { static: false })
+  set playerRef(v: ElementRef<HTMLVideoElement> | undefined) {
+    this._playerRef = v;
+    if (v && this.pendingAttach) {
+      const fn = this.pendingAttach;
+      this.pendingAttach = null;
+      fn();
+    }
+  }
+
+  private get videoEl(): HTMLVideoElement | null {
+    return this._playerRef?.nativeElement ?? null;
+  }
+
+  private hls: Hls | null = null;
 
   videoId!: number;
   video: VideoPost | null = null;
@@ -49,6 +71,8 @@ export class VideoComponent implements OnInit {
     });
 
     this.loadComments(0);
+
+    this.loadPremiere();
   }
 
   toggleLike(): void {
@@ -142,4 +166,105 @@ export class VideoComponent implements OnInit {
     if (this.page === 0) return;
     this.loadComments(this.page - 1);
   }
+
+  private loadPremiere(): void {
+    this.playerMode = 'LOADING';
+
+    this.videoService.getPremiere(this.videoId).subscribe({
+      next: (p) => {
+
+        if (!p.available) {
+          this.playerMode = 'BLOCKED';
+          return;
+        }
+
+        if (p.mode === 'MP4') {
+          if (!p.url) {
+            this.playerMode = 'ERROR';
+            return;
+          }
+
+          this.playerMode = 'MP4';
+          const url = this.absoluteBackendUrl(p.url!);
+          this.pendingAttach = () => this.attachMp4(url);
+          return;
+        }
+
+        if (p.mode === 'HLS') {
+          if (!p.url) {
+            this.playerMode = 'ERROR';
+            return;
+          }
+
+          this.playerMode = 'HLS';
+          const url = this.absoluteBackendUrl(p.url!);
+          const off = p.offsetSeconds || 0;
+          this.pendingAttach = () => this.attachHls(url, off);
+          return;
+        }
+
+        this.playerMode = 'ERROR';
+      },
+      error: () => {
+        this.playerMode = 'ERROR';
+      }
+    });
+  }
+  private attachMp4(url: string): void {
+    const el = this.videoEl;
+    console.log('[MP4] attach url=', url, 'el=', el);
+
+    if (!el) {
+      console.warn('[MP4] playerRef is undefined (video element not rendered yet)');
+      return;
+    }
+
+    el.onloadedmetadata = () => console.log('[MP4] loadedmetadata duration=', el.duration);
+    el.onerror = () => console.log('[MP4] error', el.error);
+
+    el.pause();
+    el.src = url;
+    el.load();
+
+    el.play().then(() => console.log('[MP4] playing'))
+      .catch(e => console.log('[MP4] play() rejected:', e));
+  }
+
+  private attachHls(url: string, offsetSeconds: number): void {
+    const el = this.videoEl;
+    if (!el) return;
+
+    const canNative = el.canPlayType('application/vnd.apple.mpegurl') !== '';
+
+    if (canNative) {
+      el.src = url;
+      el.addEventListener('loadedmetadata', () => {
+        el.currentTime = offsetSeconds;
+        el.play().catch(() => {});
+      }, { once: true });
+      return;
+    }
+
+    if (!Hls.isSupported()) {
+      this.playerMode = 'ERROR';
+      return;
+    }
+
+    this.hls = new Hls();
+    this.hls.loadSource(url);
+    this.hls.attachMedia(el);
+
+    this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      el.addEventListener('loadedmetadata', () => {
+        el.currentTime = offsetSeconds;
+        el.play().catch(() => {});
+      }, { once: true });
+    });
+  }
+  
+  private absoluteBackendUrl(u: string): string {
+    if (u.startsWith('/')) return `http://localhost:8081${u}`;
+    return u;
+  }
+
 }

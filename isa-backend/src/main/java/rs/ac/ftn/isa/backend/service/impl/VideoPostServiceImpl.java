@@ -23,6 +23,7 @@ import rs.ac.ftn.isa.backend.service.VideoLikeService;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
 import rs.ac.ftn.isa.backend.service.transcoding.TranscodingProducer;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
 public class VideoPostServiceImpl implements VideoPostService {
@@ -246,6 +247,7 @@ public class VideoPostServiceImpl implements VideoPostService {
         if (post == null) return Optional.empty();
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
         rs.ac.ftn.isa.backend.dto.VideoPremiereResponse resp = new rs.ac.ftn.isa.backend.dto.VideoPremiereResponse();
         resp.setServerNow(now);
@@ -266,7 +268,8 @@ public class VideoPostServiceImpl implements VideoPostService {
             resp.setAvailable(true);
             resp.setMode("HLS");
             resp.setOffsetSeconds(Math.max(0, offset));
-            resp.setUrl(post.getHlsPlaylistPath()); // očekuje /media/...
+            String hls = post.getHlsPlaylistPath(); // npr "/media/transcoded/1/hls/index.m3u8"
+            resp.setUrl(hls == null ? null : baseUrl + hls);
             return Optional.of(resp);
         }
 
@@ -274,21 +277,32 @@ public class VideoPostServiceImpl implements VideoPostService {
         resp.setAvailable(true);
         resp.setMode("MP4");
         resp.setOffsetSeconds(0);
-        resp.setUrl(toMediaUrl(post.getVideoPath()));
+        String mp4 = toMediaUrl(post.getVideoPath()); // npr "/media/videos/4.mp4"
+        resp.setUrl(mp4 == null ? null : baseUrl + mp4);
         return Optional.of(resp);
     }
 
     private String toMediaUrl(String diskPath) {
         if (diskPath == null) return null;
 
-        String p = diskPath.replace("\\", "/");
+        String p = diskPath.replace("\\", "/").trim();
 
+        // ukloni višestruke /
+        while (p.contains("//")) p = p.replace("//", "/");
+
+        // ako već vraća URL putanju
         if (p.startsWith("/media/")) return p;
 
+        // ako je relativno na uploads/
         if (p.startsWith("uploads/")) {
-            return "/media/" + p.substring("uploads/".length());
+            String rest = p.substring("uploads/".length());
+            // ukloni vodeći /
+            while (rest.startsWith("/")) rest = rest.substring(1);
+            return "/media/" + rest;
         }
 
+        // general case: ukloni vodeći /
+        while (p.startsWith("/")) p = p.substring(1);
         return "/media/" + p;
     }
 
