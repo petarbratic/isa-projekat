@@ -125,7 +125,12 @@ public class VideoPostServiceImpl implements VideoPostService {
     public byte[] getThumbnail(Long videoId) throws IOException {
         VideoPost post = videoPostRepository.findById(videoId)
                 .orElseThrow(() -> new IllegalArgumentException("Video not found"));
-        return Files.readAllBytes(Path.of(post.getThumbnailPath()));
+
+        String path = (post.getThumbnailCompressedPath() != null)
+                ? post.getThumbnailCompressedPath()
+                : post.getThumbnailPath();
+
+        return Files.readAllBytes(Path.of(path));
     }
 
     public Optional<VideoPost> findById(Long id) {

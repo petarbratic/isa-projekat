@@ -47,6 +47,12 @@ public class VideoPost {
     @JoinColumn(name = "owner_id")
     private User owner;
 
+    @Column(name = "thumbnail_compressed_path")
+    private String thumbnailCompressedPath;
+
+    @Column(name = "thumbnail_compressed_at")
+    private Timestamp thumbnailCompressedAt;
+
     public Long getId() {
         return id;
     }
@@ -115,6 +121,11 @@ public class VideoPost {
 
     public void setViews(long views) { this.views = views; }
 
+    public String getThumbnailCompressedPath() { return thumbnailCompressedPath; }
+    public void setThumbnailCompressedPath(String thumbnailCompressedPath) { this.thumbnailCompressedPath = thumbnailCompressedPath; }
+
+    public Timestamp getThumbnailCompressedAt() { return thumbnailCompressedAt; }
+    public void setThumbnailCompressedAt(Timestamp thumbnailCompressedAt) { this.thumbnailCompressedAt = thumbnailCompressedAt; }
 
     public User getOwner() {
         return owner;

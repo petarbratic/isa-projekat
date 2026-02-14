@@ -94,7 +94,7 @@ public class VideoPostController {
         );
     }
 
-    @GetMapping(value = "/videos/{id}/thumbnail", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/videos/{id}/thumbnail", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> getThumbnail(@PathVariable("id") Long videoId) {
         try {
             byte[] thumbnail = videoPostService.getThumbnail(videoId);
