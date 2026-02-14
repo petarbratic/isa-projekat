@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { VideoService } from 'src/app/core/services/video.service';
 import { Router } from '@angular/router';
+import { scheduled } from 'rxjs';
 
 @Component({
   selector: 'app-create-video',
@@ -26,7 +27,8 @@ export class CreateVideoComponent {
       title: ['', Validators.required],
       description: ['', Validators.required],
       tags: [''],
-      location: ['Novi Sad', Validators.required]
+      location: ['Novi Sad', Validators.required],
+      scheduledAt: ['', this.notInPastValidator]
     });
   }
 
@@ -47,7 +49,8 @@ export class CreateVideoComponent {
       tags: this.form.value.tags
         ? this.form.value.tags.split(',').map((t: string) => t.trim())
         : [],
-      location: this.form.value.location
+      location: this.form.value.location,
+      scheduledAt: this.form.value.scheduledAt || null
     };
 
     const formData = new FormData();
@@ -73,5 +76,18 @@ export class CreateVideoComponent {
         }
       }
     });
+  }
+  notInPastValidator(control: any) {
+    const v = control.value as string;
+    if (!v) return null; // prazno = nije zakazano
+
+    const selected = new Date(v).getTime();
+    const now = Date.now();
+
+    // mala tolerancija (15 sek) da ne padne zbog “sad”
+    if (selected < now - 15000) {
+      return { pastDate: true };
+    }
+    return null;
   }
 }
