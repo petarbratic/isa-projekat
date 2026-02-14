@@ -19,6 +19,7 @@ import rs.ac.ftn.isa.backend.security.auth.RestAuthenticationEntryPoint;
 import rs.ac.ftn.isa.backend.security.auth.TokenAuthenticationFilter;
 import rs.ac.ftn.isa.backend.service.impl.CustomUserDetailsService;
 import rs.ac.ftn.isa.backend.util.TokenUtils;
+import rs.ac.ftn.isa.backend.security.auth.UserActivityFilter;
 
 
 @Configuration
@@ -28,6 +29,9 @@ import rs.ac.ftn.isa.backend.util.TokenUtils;
 // Ukljucivanje podrske za anotacije "@Pre*" i "@Post*" koje ce aktivirati autorizacione provere za svaki pristup metodi
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
+
+    @Autowired
+    private UserActivityFilter userActivityFilter;
 
     // Servis koji se koristi za citanje podataka o korisnicima aplikacije
     @Bean
@@ -125,6 +129,8 @@ public class WebSecurityConfig {
 
         // umetni custom filter TokenAuthenticationFilter kako bi se vrsila provera JWT tokena umesto cistih korisnickog imena i lozinke (koje radi BasicAuthenticationFilter)
         http.addFilterBefore(new TokenAuthenticationFilter(tokenUtils,  userDetailsService()), BasicAuthenticationFilter.class);
+
+        http.addFilterAfter(userActivityFilter, TokenAuthenticationFilter.class);
 
         // ulancavanje autentifikacije
         http.authenticationProvider(authenticationProvider());

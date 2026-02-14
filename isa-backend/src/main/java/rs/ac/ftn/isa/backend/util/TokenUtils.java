@@ -77,6 +77,18 @@ public class TokenUtils {
         // moguce je postavljanje proizvoljnih podataka u telo JWT tokena pozivom funkcije .claim("key", value), npr. .claim("role", user.getRole())
     }
 
+    public String generateToken(User user) {
+        return Jwts.builder()
+                .setIssuer(APP_NAME)
+                .setSubject(user.getEmail())
+                .claim("userId", user.getId())
+                .setAudience(generateAudience())
+                .setIssuedAt(new Date())
+                .setExpiration(generateExpirationDate())
+                .signWith(getSigningKey(), SIGNATURE_ALGORITHM)
+                .compact();
+    }
+
     /**
      * Funkcija za utvrđivanje tipa uređaja za koji se JWT kreira.
      * @return Tip uređaja.
@@ -287,4 +299,16 @@ public class TokenUtils {
         return request.getHeader(AUTH_HEADER);
     }
 
+    public Long getUserIdFromToken(String token) {
+        try {
+            Claims claims = this.getAllClaimsFromToken(token);
+            Object val = claims.get("userId");
+            if (val == null) return null;
+            if (val instanceof Integer i) return i.longValue();
+            if (val instanceof Long l) return l;
+            return Long.valueOf(val.toString());
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
