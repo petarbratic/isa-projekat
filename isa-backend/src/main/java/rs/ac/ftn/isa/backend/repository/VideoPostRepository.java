@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import rs.ac.ftn.isa.backend.domain.model.VideoPost;
 import java.util.List;
+import java.sql.Timestamp;
 
 public interface VideoPostRepository extends JpaRepository<VideoPost, Long> {
     List<VideoPost> findAllByOrderByCreatedAtDesc();
@@ -14,4 +15,5 @@ public interface VideoPostRepository extends JpaRepository<VideoPost, Long> {
     @Query("UPDATE VideoPost v SET v.views = v.views + 1 WHERE v.id = :videoId")
     void incrementViews(Long videoId);
     List<VideoPost> findByIdIn(List<Long> ids);
+    List<VideoPost> findByThumbnailCompressedPathIsNullAndCreatedAtBefore(Timestamp cutoff);
 }
