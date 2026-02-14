@@ -98,6 +98,7 @@ public class WebSecurityConfig {
                 // .requestMatchers("/admin").hasRole("ADMIN") ili .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/api/admin/simulate-connection-loss", "/api/admin/simulate-connection-restore").permitAll()
                 .requestMatchers("/api/upload-event/**").permitAll()
+                .requestMatchers("/ws/**").permitAll()
                 // Ovim smo dozvolili pristup statickim resursima aplikacije
                 .requestMatchers(
                         "/favicon.ico",
