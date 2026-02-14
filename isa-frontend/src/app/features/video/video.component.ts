@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { VideoService } from 'src/app/core/services/video.service';
 import { VideoPost } from '../videos/video.model';
 import { PageResponse, CommentResponse } from 'src/app/models/comment.model';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { StreamingChatService, StreamingChatMessage } from 'src/app/core/services/streaming-chat.service';
 import Hls from 'hls.js';
 
 @Component({
@@ -11,7 +12,7 @@ import Hls from 'hls.js';
   templateUrl: './video.component.html',
   styleUrls: ['./video.component.scss']
 })
-export class VideoComponent implements OnInit {
+export class VideoComponent implements OnInit, OnDestroy {
 
   playerMode: 'LOADING' | 'BLOCKED' | 'HLS' | 'MP4' | 'ERROR' = 'LOADING';
 
@@ -50,10 +51,15 @@ export class VideoComponent implements OnInit {
   maxCommentLength = 500;
   minCommentLength = 5;
 
+  streamChatMessages: StreamingChatMessage[] = [];
+  newStreamChatMessage = '';
+  private chatSubscription: any = null;
+
   constructor(
     private route: ActivatedRoute,
     public videoService: VideoService,
-    public authService: AuthService
+    public authService: AuthService,
+    private streamingChatService: StreamingChatService
   ) {}
 
   private requireLogin(message: string): boolean {
@@ -200,6 +206,11 @@ export class VideoComponent implements OnInit {
           const url = this.absoluteBackendUrl(p.url!);
           const off = p.offsetSeconds || 0;
           this.pendingAttach = () => this.attachHls(url, off);
+          this.streamChatMessages = [];
+          this.streamingChatService.connect(this.videoId);
+          this.chatSubscription = this.streamingChatService.messages.subscribe((msg) => {
+            this.streamChatMessages = [...this.streamChatMessages, msg];
+          });
           return;
         }
 
@@ -265,6 +276,21 @@ export class VideoComponent implements OnInit {
   private absoluteBackendUrl(u: string): string {
     if (u.startsWith('/')) return `http://localhost:8081${u}`;
     return u;
+  }
+
+  ngOnDestroy(): void {
+    if (this.chatSubscription) {
+      this.chatSubscription.unsubscribe();
+      this.chatSubscription = null;
+    }
+    this.streamingChatService.disconnect();
+  }
+
+  sendStreamChat(): void {
+    const text = this.newStreamChatMessage?.trim();
+    if (!text || !this.authService.tokenIsPresent()) return;
+    this.streamingChatService.sendMessage(this.videoId, text);
+    this.newStreamChatMessage = '';
   }
 
 }

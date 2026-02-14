@@ -202,3 +202,98 @@ video {
 .meta-link:hover {
   text-shadow: 0 0 4px rgba(13,110,253,0.4);
 }
+
+/* Streaming chat (tačka 3.10) – prikazuje se samo u HLS režimu */
+.streaming-chat-panel {
+  margin-top: 16px;
+  padding: 14px;
+  background: #f5f7fa;
+  border-radius: 12px;
+  border: 1px solid #e1e4e8;
+}
+
+.streaming-chat-title {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.streaming-chat-messages {
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e6e6e6;
+}
+
+.streaming-chat-msg {
+  font-size: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.streaming-chat-author {
+  font-weight: 700;
+  color: #0d6efd;
+}
+
+.streaming-chat-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.streaming-chat-time {
+  font-size: 11px;
+  color: #666;
+}
+
+.streaming-chat-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.streaming-chat-form input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.streaming-chat-form input:focus {
+  outline: none;
+  border-color: #0d6efd;
+}
+
+.streaming-chat-form button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #0d6efd;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.streaming-chat-form button:hover:not(:disabled) {
+  background: #0b5ed7;
+}
+
+.streaming-chat-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.streaming-chat-hint {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  color: #666;
+}

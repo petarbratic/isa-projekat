@@ -26,6 +26,32 @@
 
   </div>
 
+  <!-- Čet tokom streaminga (samo za HLS / zakazani prikaz) -->
+  <div class="streaming-chat-panel" *ngIf="playerMode === 'HLS'">
+    <h3 class="streaming-chat-title">Čet tokom gledanja</h3>
+    <div class="streaming-chat-messages">
+      <div class="streaming-chat-msg" *ngFor="let m of streamChatMessages">
+        <span class="streaming-chat-author">{{ m.authorName }}:</span>
+        <span class="streaming-chat-text">{{ m.text }}</span>
+        <span class="streaming-chat-time">{{ m.timestamp | date:'shortTime' }}</span>
+      </div>
+    </div>
+    <div class="streaming-chat-form">
+      <input
+        type="text"
+        [(ngModel)]="newStreamChatMessage"
+        placeholder="Poruka..."
+        (keydown.enter)="sendStreamChat()"
+        [disabled]="!authService.tokenIsPresent()">
+      <button type="button" (click)="sendStreamChat()" [disabled]="!authService.tokenIsPresent()">
+        Pošalji
+      </button>
+    </div>
+    <p class="streaming-chat-hint" *ngIf="!authService.tokenIsPresent()">
+      Ulogujte se da biste slali poruke u čet.
+    </p>
+  </div>
+
   <h2 class="video-title-main">{{ video.title }}</h2>
 
   <div class="video-meta">
