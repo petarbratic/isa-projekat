@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { VideoPost } from '../../features/videos/video.model';
 import { catchError, timeout } from 'rxjs/operators';
 import { PageResponse, CommentResponse } from 'src/app/models/comment.model';
+import { VideoPremiereResponse } from 'src/app/models/videoPremiereModel';
 
 @Injectable({
   providedIn: 'root'
@@ -68,6 +69,10 @@ export class VideoService {
     return shouldLike
       ? this.http.post<void>(url, {})
       : this.http.delete<void>(url);
+  }
+
+  getPremiere(videoId: number): Observable<VideoPremiereResponse> {
+    return this.http.get<VideoPremiereResponse>(`${this.apiUrl}/videos/${videoId}/premiere`);
   }
 
 }
