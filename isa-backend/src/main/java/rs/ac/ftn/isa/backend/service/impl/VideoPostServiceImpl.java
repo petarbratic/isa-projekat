@@ -21,9 +21,12 @@ import rs.ac.ftn.isa.backend.repository.UserRepository;
 import rs.ac.ftn.isa.backend.repository.VideoPostRepository;
 import rs.ac.ftn.isa.backend.service.VideoLikeService;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
+import rs.ac.ftn.isa.backend.dto.UploadEvent;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
 import rs.ac.ftn.isa.backend.service.transcoding.TranscodingProducer;
+import rs.ac.ftn.isa.backend.service.uploadevent.UploadEventProducer;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 
 @Service
 public class VideoPostServiceImpl implements VideoPostService {
@@ -43,6 +46,8 @@ public class VideoPostServiceImpl implements VideoPostService {
     @Autowired
     private TranscodingProducer transcodingProducer;
 
+    @Autowired
+    private UploadEventProducer uploadEventProducer;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -108,6 +113,20 @@ public class VideoPostServiceImpl implements VideoPostService {
                             isScheduled
                     )
             );
+
+            // Publish upload event (JSON + Protobuf) for new video
+            UploadEvent uploadEvent = new UploadEvent(
+                    post.getId(),
+                    post.getTitle(),
+                    video.getSize(),
+                    user.getId() != null ? user.getId().toString() : "",
+                    user.getUsername() != null ? user.getUsername() : user.getEmail(),
+                    post.getCreatedAt() != null ? post.getCreatedAt().toInstant().toString() : ""
+            );
+            uploadEventProducer.sendJson(uploadEvent);
+            uploadEventProducer.sendProtobuf(uploadEvent);
+            uploadEventProducer.sendToInspectQueue(uploadEvent);
+            uploadEventProducer.sendToInspectProtobufQueue(uploadEvent);
 
         } catch (Exception e) {
             try {

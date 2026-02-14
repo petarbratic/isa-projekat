@@ -1,0 +1,9 @@
+rs\ac\ftn\isa\uploadapp\consumer\UploadEventConsumer.class
+rs\ac\ftn\isa\uploadapp\proto\UploadEventProto$UploadEvent.class
+rs\ac\ftn\isa\uploadapp\proto\UploadEventProto.class
+rs\ac\ftn\isa\uploadapp\config\RabbitMqConfig.class
+rs\ac\ftn\isa\uploadapp\UploadEventApplication.class
+rs\ac\ftn\isa\uploadapp\dto\UploadEvent.class
+rs\ac\ftn\isa\uploadapp\proto\UploadEventProto$UploadEvent$Builder.class
+rs\ac\ftn\isa\uploadapp\proto\UploadEventProto$UploadEventOrBuilder.class
+rs\ac\ftn\isa\uploadapp\proto\UploadEventProto$UploadEvent$1.class
