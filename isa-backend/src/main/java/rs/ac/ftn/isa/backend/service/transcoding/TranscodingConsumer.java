@@ -8,6 +8,8 @@ import rs.ac.ftn.isa.backend.config.TranscodingMqConfig;
 import rs.ac.ftn.isa.backend.domain.model.TranscodingJob;
 import rs.ac.ftn.isa.backend.dto.TranscodeJobMessage;
 import rs.ac.ftn.isa.backend.repository.TranscodingJobRepository;
+import rs.ac.ftn.isa.backend.domain.model.VideoPost;
+import rs.ac.ftn.isa.backend.repository.VideoPostRepository;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -17,10 +19,12 @@ public class TranscodingConsumer {
 
     private final TranscodingJobRepository jobRepo;
     private final FfmpegService ffmpegService;
+    private final VideoPostRepository videoPostRepo;
 
-    public TranscodingConsumer(TranscodingJobRepository jobRepo, FfmpegService ffmpegService) {
+    public TranscodingConsumer(TranscodingJobRepository jobRepo, VideoPostRepository videoPostRepo, FfmpegService ffmpegService) {
         this.jobRepo = jobRepo;
         this.ffmpegService = ffmpegService;
+        this.videoPostRepo = videoPostRepo;
     }
 
     @RabbitListener(queues = TranscodingMqConfig.TRANSCODE_QUEUE, containerFactory = "rabbitListenerContainerFactory")
@@ -40,10 +44,21 @@ public class TranscodingConsumer {
             markProcessing(job.getId());
 
             // preset sada samo 720p mp4 (predefinisano)
-            String out = "uploads/transcoded/" + msg.getVideoId() + "_720p.mp4";
-            ffmpegService.transcodeTo720pMp4(msg.getInputPath(), out);
+            String mp4Out = "uploads/transcoded/" + msg.getVideoId() + "_720p.mp4";
+            ffmpegService.transcodeTo720pMp4(msg.getInputPath(), mp4Out);
 
-            markDone(job.getId(), out);
+            String hlsPlaylistUrl = null;
+
+            if (msg.getScheduled()) {
+                // disk folder (bez duplog "hls")
+                String hlsDir = "uploads/transcoded/" + msg.getVideoId() + "/hls";
+                ffmpegService.transcodeToHls720p(mp4Out, hlsDir);
+
+                // URL koji FE može da koristi (mapiraš /media/** -> uploads/**)
+                hlsPlaylistUrl = "/media/transcoded/" + msg.getVideoId() + "/hls/index.m3u8";
+            }
+
+            markDone(job.getId(), mp4Out, hlsPlaylistUrl);
 
             channel.basicAck(tag, false);
 
@@ -82,11 +97,21 @@ public class TranscodingConsumer {
     }
 
     @Transactional
-    protected void markDone(Long jobDbId, String outPath) {
+    protected void markDone(Long jobDbId, String outPath, String hlsPlaylistUrl) {
         TranscodingJob job = jobRepo.findById(jobDbId).orElseThrow();
         job.setStatus(TranscodingJob.Status.DONE);
         job.setOutputPath(outPath);
         jobRepo.save(job);
+
+        VideoPost post = videoPostRepo.findById(job.getVideoId())
+                .orElseThrow(() -> new IllegalStateException("VideoPost not found: " + job.getVideoId()));
+
+        // ako je zakazano, upiši HLS playlist url
+        if (hlsPlaylistUrl != null) {
+            post.setHlsPlaylistPath(hlsPlaylistUrl);
+        }
+
+        videoPostRepo.save(post);
     }
 
     @Transactional

@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import rs.ac.ftn.isa.backend.dto.VideoPostRequest;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
 import rs.ac.ftn.isa.backend.domain.model.VideoPost;
+import rs.ac.ftn.isa.backend.dto.VideoPremiereResponse;
 
 public interface VideoPostService {
 
@@ -29,4 +30,5 @@ public interface VideoPostService {
     Optional<VideoPostResponse> findResponseById(Long id, String viewerEmail);
     void incrementViews(Long videoId);
     List<VideoPostResponse> findResponsesByIds(List<Long> ids);
+    Optional<VideoPremiereResponse> getPremiere(Long videoId);
 }

@@ -63,6 +63,14 @@ public class VideoPostServiceImpl implements VideoPostService {
             throw new IllegalArgumentException("User not found");
         }
 
+        Timestamp scheduledAt = dto.getScheduledAt();
+        if (scheduledAt != null) {
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            if (scheduledAt.before(now)) {
+                throw new IllegalArgumentException("scheduledAt must be in the future");
+            }
+        }
+
         VideoPost post = new VideoPost();
         post.setTitle(dto.getTitle());
         post.setDescription(dto.getDescription());
@@ -70,6 +78,7 @@ public class VideoPostServiceImpl implements VideoPostService {
         post.setLocation(dto.getLocation());
         post.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         post.setOwner(user);
+        post.setScheduledAt(scheduledAt);
 
         videoPostRepository.save(post);
 
@@ -88,11 +97,14 @@ public class VideoPostServiceImpl implements VideoPostService {
 
             videoPostRepository.save(post);
 
+
+            boolean isScheduled = (post.getScheduledAt() != null);
             transcodingProducer.publish(
                     new rs.ac.ftn.isa.backend.dto.TranscodeJobMessage(
                             post.getId(),
                             post.getVideoPath(),
-                            "MP4_720P"
+                            "MP4_720P",
+                            isScheduled
                     )
             );
 
@@ -227,6 +239,58 @@ public class VideoPostServiceImpl implements VideoPostService {
         return videoPostRepository.findById(id).map(p -> toResponse(p, viewerEmail));
     }
 
+
+    @Override
+    public Optional<rs.ac.ftn.isa.backend.dto.VideoPremiereResponse> getPremiere(Long videoId) {
+        VideoPost post = videoPostRepository.findById(videoId).orElse(null);
+        if (post == null) return Optional.empty();
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+
+        rs.ac.ftn.isa.backend.dto.VideoPremiereResponse resp = new rs.ac.ftn.isa.backend.dto.VideoPremiereResponse();
+        resp.setServerNow(now);
+        resp.setScheduledAt(post.getScheduledAt());
+
+        // Zakazano, ali nije počelo
+        if (post.getScheduledAt() != null && now.before(post.getScheduledAt())) {
+            resp.setAvailable(false);
+            resp.setMode("WAIT");
+            resp.setUrl(null);
+            resp.setOffsetSeconds(0);
+            return Optional.of(resp);
+        }
+
+        // Zakazano i počelo -> HLS + offset
+        if (post.getScheduledAt() != null) {
+            long offset = (now.getTime() - post.getScheduledAt().getTime()) / 1000;
+            resp.setAvailable(true);
+            resp.setMode("HLS");
+            resp.setOffsetSeconds(Math.max(0, offset));
+            resp.setUrl(post.getHlsPlaylistPath()); // očekuje /media/...
+            return Optional.of(resp);
+        }
+
+        // Nije zakazano -> MP4 preko /media
+        resp.setAvailable(true);
+        resp.setMode("MP4");
+        resp.setOffsetSeconds(0);
+        resp.setUrl(toMediaUrl(post.getVideoPath()));
+        return Optional.of(resp);
+    }
+
+    private String toMediaUrl(String diskPath) {
+        if (diskPath == null) return null;
+
+        String p = diskPath.replace("\\", "/");
+
+        if (p.startsWith("/media/")) return p;
+
+        if (p.startsWith("uploads/")) {
+            return "/media/" + p.substring("uploads/".length());
+        }
+
+        return "/media/" + p;
+    }
 
 
 }

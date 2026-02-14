@@ -78,6 +78,13 @@ public class VideoPostController {
         }
     }
 
+    @GetMapping("/videos/{id}/premiere")
+    public ResponseEntity<rs.ac.ftn.isa.backend.dto.VideoPremiereResponse> premiere(@PathVariable Long id) {
+        return videoPostService.getPremiere(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
     @GetMapping("/videos")
     //@PreAuthorize("isAuthenticated()")

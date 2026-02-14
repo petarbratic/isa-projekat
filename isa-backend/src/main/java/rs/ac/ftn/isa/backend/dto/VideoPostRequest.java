@@ -1,5 +1,6 @@
 package rs.ac.ftn.isa.backend.dto;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class VideoPostRequest {
@@ -8,6 +9,7 @@ public class VideoPostRequest {
     private String description;
     private List<String> tags;
     private String location;
+    private Timestamp scheduledAt;
 
     public String getTitle() {
         return title;
@@ -40,4 +42,9 @@ public class VideoPostRequest {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    public void setScheduledAt(Timestamp scheduledAt) { this.scheduledAt = scheduledAt; }
+
+    public Timestamp getScheduledAt() { return scheduledAt; }
+
 }
