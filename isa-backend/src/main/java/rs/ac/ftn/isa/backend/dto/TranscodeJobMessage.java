@@ -9,13 +9,16 @@ public class TranscodeJobMessage implements Serializable {
     private String inputPath;
     private String preset;
 
+    private Boolean isScheduled;
+
     public TranscodeJobMessage() { }
 
-    public TranscodeJobMessage(Long videoId, String inputPath, String preset) {
+    public TranscodeJobMessage(Long videoId, String inputPath, String preset, Boolean isScheduled) {
         this.jobId = UUID.randomUUID().toString();
         this.videoId = videoId;
         this.inputPath = inputPath;
         this.preset = preset;
+        this.isScheduled = isScheduled;
     }
 
     public String getJobId() { return jobId; }
@@ -29,4 +32,7 @@ public class TranscodeJobMessage implements Serializable {
 
     public String getPreset() { return preset; }
     public void setPreset(String preset) { this.preset = preset; }
+
+    public Boolean getScheduled() { return isScheduled; }
+    public void setScheduled(Boolean scheduled) { isScheduled = scheduled; }
 }

@@ -3,10 +3,27 @@
   
 
   <div class="video-wrapper">
-    <video controls autoplay>
-      <source [src]="videoService.getVideoUrl(video.id)" type="video/mp4">
-      Your browser does not support video.
+
+    <div *ngIf="playerMode === 'LOADING'">
+      Učitavanje...
+    </div>
+
+    <div *ngIf="playerMode === 'BLOCKED'">
+      Ovaj video još nije dostupan.
+    </div>
+
+    <div *ngIf="playerMode === 'ERROR'">
+      Greška pri učitavanju videa.
+    </div>
+
+    <video
+      #player
+      *ngIf="playerMode === 'HLS' || playerMode === 'MP4'"
+      controls
+      autoplay
+      playsinline>
     </video>
+
   </div>
 
   <h2 class="video-title-main">{{ video.title }}</h2>

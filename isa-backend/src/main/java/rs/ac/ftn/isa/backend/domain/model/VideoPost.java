@@ -53,6 +53,12 @@ public class VideoPost {
     @Column(name = "thumbnail_compressed_at")
     private Timestamp thumbnailCompressedAt;
 
+    @Column(name = "scheduled_at")
+    private Timestamp scheduledAt;
+
+    @Column(name = "hls_playlist_path")
+    private String hlsPlaylistPath;
+
     public Long getId() {
         return id;
     }
@@ -134,6 +140,15 @@ public class VideoPost {
     public void setOwner(User owner) {
         this.owner = owner;
     }
+
+    public Timestamp getScheduledAt() { return scheduledAt; }
+
+    public String getHlsPlaylistPath() { return hlsPlaylistPath; }
+
+    public void setScheduledAt(Timestamp scheduledAt) { this.scheduledAt = scheduledAt; }
+
+    public void setHlsPlaylistPath(String hlsPlaylistPath) { this.hlsPlaylistPath = hlsPlaylistPath; }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = new Timestamp(System.currentTimeMillis());

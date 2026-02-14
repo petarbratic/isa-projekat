@@ -107,7 +107,8 @@ public class WebSecurityConfig {
                         "/images/**",
                         "/static/**",
                         "/uploads/**",
-                        "/api/videos/**"
+                        "/api/videos/**",
+                        "/media/**"
                 ).permitAll()
 
                 .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()

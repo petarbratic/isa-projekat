@@ -23,6 +23,7 @@ import rs.ac.ftn.isa.backend.service.VideoLikeService;
 import rs.ac.ftn.isa.backend.service.VideoPostService;
 import rs.ac.ftn.isa.backend.dto.VideoPostResponse;
 import rs.ac.ftn.isa.backend.service.transcoding.TranscodingProducer;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
 public class VideoPostServiceImpl implements VideoPostService {
@@ -63,6 +64,14 @@ public class VideoPostServiceImpl implements VideoPostService {
             throw new IllegalArgumentException("User not found");
         }
 
+        Timestamp scheduledAt = dto.getScheduledAt();
+        if (scheduledAt != null) {
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            if (scheduledAt.before(now)) {
+                throw new IllegalArgumentException("scheduledAt must be in the future");
+            }
+        }
+
         VideoPost post = new VideoPost();
         post.setTitle(dto.getTitle());
         post.setDescription(dto.getDescription());
@@ -70,6 +79,7 @@ public class VideoPostServiceImpl implements VideoPostService {
         post.setLocation(dto.getLocation());
         post.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         post.setOwner(user);
+        post.setScheduledAt(scheduledAt);
 
         videoPostRepository.save(post);
 
@@ -88,11 +98,14 @@ public class VideoPostServiceImpl implements VideoPostService {
 
             videoPostRepository.save(post);
 
+
+            boolean isScheduled = (post.getScheduledAt() != null);
             transcodingProducer.publish(
                     new rs.ac.ftn.isa.backend.dto.TranscodeJobMessage(
                             post.getId(),
                             post.getVideoPath(),
-                            "MP4_720P"
+                            "MP4_720P",
+                            isScheduled
                     )
             );
 
@@ -227,6 +240,71 @@ public class VideoPostServiceImpl implements VideoPostService {
         return videoPostRepository.findById(id).map(p -> toResponse(p, viewerEmail));
     }
 
+
+    @Override
+    public Optional<rs.ac.ftn.isa.backend.dto.VideoPremiereResponse> getPremiere(Long videoId) {
+        VideoPost post = videoPostRepository.findById(videoId).orElse(null);
+        if (post == null) return Optional.empty();
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
+        rs.ac.ftn.isa.backend.dto.VideoPremiereResponse resp = new rs.ac.ftn.isa.backend.dto.VideoPremiereResponse();
+        resp.setServerNow(now);
+        resp.setScheduledAt(post.getScheduledAt());
+
+        // Zakazano, ali nije počelo
+        if (post.getScheduledAt() != null && now.before(post.getScheduledAt())) {
+            resp.setAvailable(false);
+            resp.setMode("WAIT");
+            resp.setUrl(null);
+            resp.setOffsetSeconds(0);
+            return Optional.of(resp);
+        }
+
+        // Zakazano i počelo -> HLS + offset
+        if (post.getScheduledAt() != null) {
+            long offset = (now.getTime() - post.getScheduledAt().getTime()) / 1000;
+            resp.setAvailable(true);
+            resp.setMode("HLS");
+            resp.setOffsetSeconds(Math.max(0, offset));
+            String hls = post.getHlsPlaylistPath(); // npr "/media/transcoded/1/hls/index.m3u8"
+            resp.setUrl(hls == null ? null : baseUrl + hls);
+            return Optional.of(resp);
+        }
+
+        // Nije zakazano -> MP4 preko /media
+        resp.setAvailable(true);
+        resp.setMode("MP4");
+        resp.setOffsetSeconds(0);
+        String mp4 = toMediaUrl(post.getVideoPath()); // npr "/media/videos/4.mp4"
+        resp.setUrl(mp4 == null ? null : baseUrl + mp4);
+        return Optional.of(resp);
+    }
+
+    private String toMediaUrl(String diskPath) {
+        if (diskPath == null) return null;
+
+        String p = diskPath.replace("\\", "/").trim();
+
+        // ukloni višestruke /
+        while (p.contains("//")) p = p.replace("//", "/");
+
+        // ako već vraća URL putanju
+        if (p.startsWith("/media/")) return p;
+
+        // ako je relativno na uploads/
+        if (p.startsWith("uploads/")) {
+            String rest = p.substring("uploads/".length());
+            // ukloni vodeći /
+            while (rest.startsWith("/")) rest = rest.substring(1);
+            return "/media/" + rest;
+        }
+
+        // general case: ukloni vodeći /
+        while (p.startsWith("/")) p = p.substring(1);
+        return "/media/" + p;
+    }
 
 
 }

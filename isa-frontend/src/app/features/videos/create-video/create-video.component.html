@@ -48,6 +48,17 @@
       </div>
     </div>
 
+    <div class="field">
+      <label>Zakazana premijera</label>
+      <input
+        type="datetime-local"
+        formControlName="scheduledAt"
+      >
+      <div class="error" *ngIf="form.get('scheduledAt')?.touched && form.get('scheduledAt')?.hasError('pastDate')">
+        Premijera ne može biti u prošlosti.
+      </div>
+    </div>
+
     <button class="submit-btn" type="submit" [disabled]="form.invalid || !videoFile || !thumbnailFile">
       Upload
     </button>
