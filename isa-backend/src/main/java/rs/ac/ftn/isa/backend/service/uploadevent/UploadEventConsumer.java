@@ -14,16 +14,16 @@ public class UploadEventConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(UploadEventConsumer.class);
 
-    /** Receives UploadEvent as JSON (Jackson-deserialized). */
-    @RabbitListener(queues = UploadEventMqConfig.UPLOAD_EVENT_JSON_QUEUE, containerFactory = "rabbitListenerContainerFactory")
+    /** Isključeno – poruke prima isa-upload-event-app (nova aplikacija). */
+    // @RabbitListener(queues = UploadEventMqConfig.UPLOAD_EVENT_JSON_QUEUE, containerFactory = "rabbitListenerContainerFactory")
     public void handleJson(UploadEvent event) {
         if (event != null) {
             logEvent("JSON", event);
         }
     }
 
-    /** Receives raw message and deserializes Protobuf. */
-    @RabbitListener(queues = UploadEventMqConfig.UPLOAD_EVENT_PROTOBUF_QUEUE)
+    /** Isključeno: poruke prima isa-upload-event-app. */
+    // @RabbitListener(queues = UploadEventMqConfig.UPLOAD_EVENT_PROTOBUF_QUEUE)
     public void handleProtobuf(Message amqpMessage) {
         try {
             UploadEventProto.UploadEvent proto = UploadEventProto.UploadEvent.parseFrom(amqpMessage.getBody());
