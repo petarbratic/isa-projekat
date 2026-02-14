@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+import * as SockJS from 'sockjs-client';
 import { AuthService } from './auth.service';
 
 export interface StreamingChatMessage {
@@ -37,7 +37,7 @@ export class StreamingChatService {
     const wsUrl = `${WS_BASE}/ws`;
 
     this.client = new Client({
-      webSocketFactory: () => new SockJS(wsUrl) as any,
+      webSocketFactory: () => new (SockJS as any)(wsUrl),
       reconnectDelay: 3000,
       onConnect: () => {
         if (!this.client || this.currentVideoId === null) return;
